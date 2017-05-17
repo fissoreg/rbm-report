@@ -1,0 +1,84 @@
+\documentclass[twocolumn]{article}
+
+\usepackage{amsmath}
+
+\usepackage{bm}
+
+\usepackage{physics}
+
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\graphicspath{{img/}}
+
+\everymath{\displaystyle}
+
+\begin{document}
+
+\title{Restricted Boltzmann Machines}
+\author{Giancarlo Fissore}
+\date{May 2017}
+\maketitle
+
+\begin{abstract}
+  Abstract text
+\end{abstract}
+
+\section{Introduction}
+
+\section{Training}
+A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_i\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. x. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
+
+\begin{equation}
+E(\textbf{h},\textbf{v}) = - \sum_i a_i v_i - \sum_j b_j h_j - \sum_{i,j} v_i w_{ij} h_j
+\end{equation}
+
+where \(a_i\) and \(b_i\) are \textit{external fields} acting respectively on the visible and hidden units. The probability of a certain configuration is then given by the Boltzmann measure (taking \(\beta = 1\))
+
+\begin{equation}
+P(\textbf{h},\textbf{v}) = \frac{e^{-E(\textbf{h},\textbf{v})}}{Z}
+\end{equation}
+
+where \(Z = \sum_{\textbf{h},\textbf{v}} e^{-E(\textbf{h},\textbf{v})}\) is the \textit{partition function}. The probabilities of activations for visible and hidden units can be simply computed to be
+
+\begin{align}
+P(v_i = 1 | \textbf{h}) &  = \frac{1}{1+e^{-a_i - \sum_{j} w_{ij} h_j}} \nonumber \\
+& = \sigma \left(a_i + \sum_{j} w_{ij} h_j \right) \\
+P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
+& = \sigma \left(b_j + \sum_i w_{ij} v_i \right)
+\end{align}
+
+We see that the usual neuron activating function (the sigmoid function, which we indicated by \(\sigma\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: when negative, they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
+
+What we are interested in is the probability for the visible units, which is the layer we use to represent data. It can be easily defined as
+
+\begin{align}
+P(\textbf{v}) &  = \sum_{\textbf{h}} P(\textbf{h},\textbf{v}) \nonumber \\
+& = \frac{e^{-F(\textbf{v})}}{Z}, \quad Z = \sum_{\textbf{v}} e^{-F(\textbf{v})}
+\end{align}
+
+where, further exploiting the parallel with spin models, we have introduced the \textit{free energy}
+
+\begin{align}
+F(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumber \\
+& = -\sum_i a_i v_i -\sum_j \log \sum_{h_j} e^{h_j \left( b_j + \sum_i w_{ij} v_i \right)} \nonumber \\
+& = -\sum_i a_i v_i -\sum_j \log \left( 1 +  e^{\left( b_j + \sum_i w_{ij} v_i \right)} \right)
+\end{align}
+
+To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) (and thus minimize the free energy) for the samples belonging to the training set. Once this is done, we can sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. The algorithms used to train and sample RBMs are usually based on Monte Carlo methods. In particular, the most effective algorithms for training are \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. 
+
+\section{Spectral analysis}
+The structure of the data that a RBM  is able to generate must be in some way encoded into the external fields \(\textbf{a},\textbf{b}\) and the weights matrix \(\textbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\textbf{a}\) encode this information, it is sufficient to use the initialization rule \(a_i = \log[p_i/(1-p_i)]\) as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \(W\) during the training, given by
+
+\begin{equation}
+\textbf{W} = \textbf{U\(\Sigma V^T \) } 
+\end{equation}
+
+where the columns of \textbf{U} and \textbf{V} are respectively the left and right singular vectors and \textbf{\(\Sigma\)} is the diagonal matrix of the singular values in decreasing order. Of particular interest is the matrix \(U\), as it encodes the singular vectors related to the visible layer and can thus be visualized in the pixel space.
+
+[interpretation of modes for RBM]
+
+\subsection{Distribution of the singular values}
+The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, thus its singular values distribution is described by the Marchenko-Pastur law as shown in fig. x. The evolution of this distribution is shown in fig. x; as the training goes on, more and more singular values acquire importance and overcome the threshold of the distribution for a random matrix while the remaining singular values decrease to almost null values.
+
+\input{bib.tex}
+\end{document}
