@@ -67,18 +67,30 @@ F(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumbe
 To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) (and thus minimize the free energy) for the samples belonging to the training set. Once this is done, we can sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. The algorithms used to train and sample RBMs are usually based on Monte Carlo methods. In particular, the most effective algorithms for training are \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. 
 
 \section{Spectral analysis}
-The structure of the data that a RBM  is able to generate must be in some way encoded into the external fields \(\textbf{a},\textbf{b}\) and the weights matrix \(\textbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\textbf{a}\) encode this information, it is sufficient to use the initialization rule \(a_i = \log[p_i/(1-p_i)]\) as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \(W\) during the training, given by
+The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\textbf{a},\textbf{b}\) and the weights matrix \(\textbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\textbf{a}\) encode this information, it is sufficient to use the initialization rule \(a_i = \log[p_i/(1-p_i)]\) as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \textbf{W} during the training, given by
 
 \begin{equation}
 \textbf{W} = \textbf{U\(\Sigma V^T \) } 
 \end{equation}
 
-where the columns of \textbf{U} and \textbf{V} are respectively the left and right singular vectors and \textbf{\(\Sigma\)} is the diagonal matrix of the singular values in decreasing order. Of particular interest is the matrix \(U\), as it encodes the singular vectors related to the visible layer and can thus be visualized in the pixel space.
+where the columns of \textbf{U} and \textbf{V} are respectively the left and right singular vectors and \textbf{\(\Sigma\)} is the diagonal matrix of the singular values in decreasing order. 
+In the context of a RBM, we can better specify the role of the SVD matrices:
 
+\begin{itemize}
+\item \textbf{U} encodes the singular vectors related to the visible layer and can therefore be visualized in the pixel space
+\item  \textbf{V} is related to the hidden layer and it is a square orthogonal matrix that can be interpreted as a rotation. 
+\item The singular values \( \{ {\sigma}_j \} \) contained in \textbf{\(\Sigma\)} can be thought of as scaling factors whose action is to weight the singular vectors composing \textbf{W}.
+\end{itemize}
+
+Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and the corresponding left singular vectors during the training.
+
+Of particular interest is the matrix 
 [interpretation of modes for RBM]
 
 \subsection{Distribution of the singular values}
-The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, thus its singular values distribution is described by the Marchenko-Pastur law as shown in fig. x. The evolution of this distribution is shown in fig. x; as the training goes on, more and more singular values acquire importance and overcome the threshold of the distribution for a random matrix while the remaining singular values decrease to almost null values.
+The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, whose singular values distribution is described by the Marchenko-Pastur law as shown in fig. x. The evolution of this distribution is shown in fig. x; as the training goes on, more and more singular values acquire importance and overcome the threshold of the distribution for a random matrix while the remaining singular values decrease to almost null values.
+
 
 \input{bib.tex}
+
 \end{document}
