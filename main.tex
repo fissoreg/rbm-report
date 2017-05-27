@@ -92,12 +92,16 @@ After a long training the singular values \(\sigma_j\) are separated into two ca
 
 The evolution of the \(\sigma_j\) distribution described above suggests that the training process is able to discern between the \textit{most important} singular vectors, which are brought above threshold, and a bulk of \textit{less important} singular vectors, which are practically eliminated by cutting down the corresponding \(\sigma_j\). This is a good indication about what are the dynamics of the learning process, but it is not really satisfactory. In particular, some matters need to be addressed: (i) what do singular vectors represent?, (ii) what is the meaning of \textit{more} and \textit{less} important?, (iii) when to stop the learning?
 
+\subsection{Analysis of left singular vectors}
+
+To understand the role of the left singular vectors of a RBM we must keep in mind the interpretation for the SVD decomposition of \textbf{W} given previously. We have seen how the matrix of the weights \textbf{\(\Sigma\)} is shaped during the learning, and we recall that \textbf{v} is interpreted as a rotation in the space of the hidden units. We then expect to recover the structure of the training data into the \textbf{U} matrix, and to show that we carefully analyze the left singular vectors during training by visualizing them in the pixel space.
+
+Before focusing on the left singular vectors, we note that also the external visible field can be visualized in the pixel space. With the initialization rule y we are able to encode into the field the mean activation of the visible layer, which is clearly shown in fig. x in the pixel space. If we instead initialize the visible field with a null vector, the mean activation pattern is learnt very effectively as the strongest left singular value. The striking resemblance between the mean activation pattern computed from the training data and the one learnt by the RBM is shown in fig. x and it serves as a first example of what the left singular vectors represent. It seems then equivalent to either encode the mean activation pattern into the visible field since the beginning or letting the RBM learn such a pattern as a left singular vector. In practice the second case is not desirable as the RBM associates to the mean activation pattern a very strong singular value, many order of magnitudes higher then the strongest outliers. This results in a bias in the sampling from the trained machine, such that the samples whose activation pattern is nearest to the mean are sampled with a higher frequency (in the worst case those are the only configurations sampled at equilibrium).
+
+The first 10 left singular vectors of a trained RBM are shown in fig. x and they each represent a global trait. A trend in the successive vectors is highlighted:
 
 
-
-This process highlights a twofold effect: the singular vectors corresponding to the above threshold \(\sigma_j\) are strengthen by the training, while the... . However,
-
- as shown in fig. x. The evolution of this distribution is shown in fig. x; as the training goes on, more and more singular values acquire importance and overcome the threshold of the distribution for a random matrix while the remaining singular values decrease to almost null values.
+[they don't change with the epochs bla bla...].
 
 
 \input{bib.tex}
