@@ -82,13 +82,16 @@ In the context of a RBM, we can better specify the role of the SVD matrices:
 \item The singular values \( \{ {\sigma}_j \} \) contained in \textbf{\(\Sigma\)} can be thought of as scaling factors whose action is to weight the singular vectors composing \textbf{W}.
 \end{itemize}
 
-Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and the corresponding left singular vectors during the training.
-
-Of particular interest is the matrix 
-[interpretation of modes for RBM]
+Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and looking at the corresponding left singular vectors during the training.
 
 \subsection{Distribution of the singular values}
-The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, whose singular values distribution is described by the Marchenko-Pastur law as shown in fig. x. The evolution of this distribution is shown in fig. x; as the training goes on, more and more singular values acquire importance and overcome the threshold of the distribution for a random matrix while the remaining singular values decrease to almost null values.
+The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, whose singular values distribution is known to be given by the Marchenko-Pastur law. Fig. x shows the agreement between the empirical distribution and the theoretical distribution. In particular, we note how all \(\sigma_j\) have values below the threshold set by the Marchenko-Pastur law, forming a \textit{bulk} of singular values.
+
+Starting with the training we see that many singular values increase in value and overcome the threshold for a gaussian random matrix; these are \textit{outliers} leaving the bulk, shown in fig. x. During the first epochs of the training this process is very fast and many \(\sigma_j\) are easily extracted from the bulk, growing of many orders of magnitude. The bulk is instead shrinked to low values, meaning that the \(\sigma_j\) which do not overcome the threshold decrease in magnitude. Going on with the training this process slows down but it does not stop: outliers keep growing slowly and the bulk keep shrinking to approach a spike around zero. The evolution of the \(\sigma_j\) distribution is shown in fig. x. After a long training the singular values \(\sigma_j\) are separated into two categories: a concentrated set of almost-null singular values and a "expanded" set of outliers above threshold, as shown in fig. x. 
+
+This process highlights a twofold effect: the singular vectors corresponding to the above threshold \(\sigma_j\) are strengthen by the training, while the
+
+ as shown in fig. x. The evolution of this distribution is shown in fig. x; as the training goes on, more and more singular values acquire importance and overcome the threshold of the distribution for a random matrix while the remaining singular values decrease to almost null values.
 
 
 \input{bib.tex}
