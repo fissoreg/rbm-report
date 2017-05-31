@@ -1,4 +1,4 @@
-\documentclass{article}
+\documentclass[twocolumn]{article}
 
 \usepackage{amsmath}
 
@@ -88,6 +88,31 @@ Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} 
 \subsection{Distribution of the singular values}
 The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, whose singular values distribution is known to be given by the Marchenko-Pastur law. Fig. x shows the agreement between the empirical distribution and the theoretical distribution. In particular, we note how all \(\sigma_j\) have values below the threshold set by the Marchenko-Pastur law, forming a \textit{bulk} of singular values.
 
+\begin{figure}
+  \centering
+  \begin{subfigure}{.45\linewidth}
+    \includegraphics[width=\linewidth]{mp_fit.eps}
+    \caption{}
+  \end{subfigure}
+  \begin{subfigure}{.45\linewidth}
+    \includegraphics[width=\linewidth]{sv_distr_e1_b10.eps}
+    \caption{}
+  \end{subfigure}\par\medskip
+  \begin{subfigure}{.45\linewidth}
+    \includegraphics[width=\linewidth]{sv_distr_e1_b60.eps}
+    \caption{}
+  \end{subfigure}
+  \begin{subfigure}{.45\linewidth}
+    \includegraphics[width=\linewidth]{sv_distr_e1_b120.eps}
+    \caption{}  
+  \end{subfigure}
+  \begin{subfigure}{\linewidth}
+    \includegraphics[width=\linewidth]{sv_distr_e40_b600.eps}
+    \caption{}  
+  \end{subfigure}
+ \caption{Some grouped images}
+\end{figure}
+
 Starting with the training we see that many singular values increase in value and overcome the threshold for a gaussian random matrix; these are \textit{outliers} leaving the bulk, shown in fig. x. During the first epochs of the training this process is very fast and many \(\sigma_j\) are easily extracted from the bulk, growing of many orders of magnitude. The bulk is instead shrinked to low values, meaning that the \(\sigma_j\) which do not overcome the threshold decrease in magnitude. Going on with the training this process slows down but it does not stop: outliers keep growing slowly and the bulk keeps shrinking to approach a spike around zero. It is important to note that a kind of hierarchy is maintained in the process: the first outliers are never overcome by the newly extracted \(\sigma_j\), and this is made clear by looking at the corresponding left singular vectors (see next section).
 After a long training the singular values \(\sigma_j\) are separated into two categories: a concentrated set of almost-null singular values and a set of outliers spread above the threshold, as shown in fig. x.
 
@@ -103,15 +128,15 @@ Before focusing on the left singular vectors, we note that also the external vis
   \centering
   \begin{subfigure}{.3\linewidth}
     \includegraphics[width=\linewidth]{mode_1_training.eps}
-    \caption{bias}
+    \caption{}
   \end{subfigure}
   \begin{subfigure}{.3\linewidth}
     \includegraphics[width=\linewidth]{vbias.png}
-    \caption{vbias}  
+    \caption{}  
   \end{subfigure}
   \begin{subfigure}{.3\linewidth}
     \includegraphics[width=\linewidth]{X_l_eigv_1.eps}
-    \caption{x mode 1}
+    \caption{}
   \end{subfigure}\par\medskip
   \begin{subfigure}{\linewidth}
     \includegraphics[width=.1\linewidth]{W_l_eigv_2.eps}
@@ -123,7 +148,7 @@ Before focusing on the left singular vectors, we note that also the external vis
     \includegraphics[width=.1\linewidth]{W_l_eigv_8.eps}
     \includegraphics[width=.1\linewidth]{W_l_eigv_9.eps}
     \includegraphics[width=.1\linewidth]{W_l_eigv_10.eps}
-    \caption{modes}
+    \caption{}
   \end{subfigure}\par
   \begin{subfigure}{\linewidth}
     \includegraphics[width=.1\linewidth]{X_l_eigv_2.eps}
@@ -135,7 +160,7 @@ Before focusing on the left singular vectors, we note that also the external vis
     \includegraphics[width=.1\linewidth]{X_l_eigv_8.eps}
     \includegraphics[width=.1\linewidth]{X_l_eigv_9.eps}
     \includegraphics[width=.1\linewidth]{X_l_eigv_10.eps}
-    \caption{modes}
+    \caption{}
   \end{subfigure}
  \caption{Some grouped images}
 \end{figure}
