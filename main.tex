@@ -7,6 +7,7 @@
 \usepackage{physics}
 
 \usepackage{graphicx}
+\usepackage{subcaption}
 \usepackage{epstopdf}
 \graphicspath{{img/}}
 
@@ -97,6 +98,18 @@ The evolution of the \(\sigma_j\) distribution described above suggests that the
 To understand the role of the left singular vectors of a RBM we must keep in mind the interpretation for the SVD decomposition of \textbf{W} given previously. We have seen how the matrix of the weights \textbf{\(\Sigma\)} is shaped during the learning, and we recall that \textbf{V} is interpreted as a rotation in the space of the hidden units. We then expect to recover the structure of the training data into the \textbf{U} matrix, and to show that we carefully analyze the left singular vectors during training by visualizing them in the pixel space.
 
 Before focusing on the left singular vectors, we note that also the external visible field can be visualized in the pixel space. With the initialization rule y we are able to encode into the field the mean activation of the visible layer, which is clearly shown in fig. x in the pixel space. If we instead initialize the visible field with a null vector, the mean activation pattern is learnt very effectively as the strongest left singular value. The striking resemblance between the mean activation pattern computed from the training data and the one learnt by the RBM is shown in fig. x and it serves as a first example of what the left singular vectors represent. It seems then equivalent to either encode the mean activation pattern into the visible field since the beginning or letting the RBM learn such a pattern as a left singular vector. In practice the second case is not desirable as the RBM associates to the mean activation pattern a very strong singular value, many order of magnitudes higher then the strongest outliers. This results in a bias in the sampling from the trained machine, such that the samples whose activation pattern is nearest to the mean are sampled with a higher frequency (in the worst case those are the only configurations sampled at equilibrium).
+
+\begin{figure}
+  \begin{subfigure}{.1\linewidth}
+    \includegraphics[width=.1\linewidth]{mode_1_training.png}\hfill
+  \end{subfigure}
+  \begin{subfigure}{.9\linewidth}
+    \includegraphics[width=.4\linewidth]{W_l_eigv_2.eps}\hfill
+    \includegraphics[width=.5\linewidth]{W_l_eigv_3.eps}
+    \caption{}
+  \end{subfigure}\par\medskip
+ \caption{Some grouped images}
+\end{figure}
 
 The first 10 left singular vectors of a trained RBM are shown in fig. x. They are all composed by a homogeneous background on the borders and a set of alternating dark and light traits in the center, highlighting the fact that each singular vector acts globally on the visible layer. Even if the pictures seen in fig. x are quite different one from another, an interesting trend is found: a higher number of alternating traits is present in the successive vectors. At this point it is useful to draw a comparison to the Fourier decomposition of an image and interpret the left singular values as the \textit{modes} composing the activation pattern. The first singular vectors, characterized by a small number of alternating traits, play the role of the \textit{low frequency} modes while the successive modes act as \textit{high frequency} modes. The analogy to Fourier modes is suggested by the fact that we are basically performing Principal Component Analysis (PCA) over the matrix \textbf{W} and the left singular vectors can thus be identified with the principal modes of variation.
 
