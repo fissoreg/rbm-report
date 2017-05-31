@@ -48,6 +48,12 @@ P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
 & = \sigma \left(b_j + \sum_i w_{ij} v_i \right)
 \end{align}
 
+\begin{figure}
+  \centering
+  \includegraphics{rbm.png}
+  \caption{}
+\end{figure}
+
 We see that the usual neuron activation function (the sigmoid function, which we indicated by \(\sigma\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: when negative, they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
 
 What we are interested in is the probability for the visible units, which is the layer we use to represent data. It can be easily defined as
