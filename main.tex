@@ -100,15 +100,43 @@ To understand the role of the left singular vectors of a RBM we must keep in min
 Before focusing on the left singular vectors, we note that also the external visible field can be visualized in the pixel space. With the initialization rule y we are able to encode into the field the mean activation of the visible layer, which is clearly shown in fig. x in the pixel space. If we instead initialize the visible field with a null vector, the mean activation pattern is learnt very effectively as the strongest left singular value. The striking resemblance between the mean activation pattern computed from the training data and the one learnt by the RBM is shown in fig. x and it serves as a first example of what the left singular vectors represent. It seems then equivalent to either encode the mean activation pattern into the visible field since the beginning or letting the RBM learn such a pattern as a left singular vector. In practice the second case is not desirable as the RBM associates to the mean activation pattern a very strong singular value, many order of magnitudes higher then the strongest outliers. This results in a bias in the sampling from the trained machine, such that the samples whose activation pattern is nearest to the mean are sampled with a higher frequency (in the worst case those are the only configurations sampled at equilibrium).
 
 \begin{figure}
+  \centering
   \begin{subfigure}{.3\linewidth}
-    \includegraphics[width=1\linewidth]{mode_1_training.png}
-    \caption{bias from training}
+    \includegraphics[width=\linewidth]{mode_1_training.eps}
+    \caption{bias}
   \end{subfigure}
-  \begin{subfigure}{.6\linewidth}
-    \includegraphics[width=.3\linewidth]{W_l_eigv_2.eps}
-    \includegraphics[width=.3\linewidth]{W_l_eigv_3.eps}
-    \caption{modes}
+  \begin{subfigure}{.3\linewidth}
+    \includegraphics[width=\linewidth]{vbias.png}
+    \caption{vbias}  
+  \end{subfigure}
+  \begin{subfigure}{.3\linewidth}
+    \includegraphics[width=\linewidth]{X_l_eigv_1.eps}
+    \caption{x mode 1}
   \end{subfigure}\par\medskip
+  \begin{subfigure}{\linewidth}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_2.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_3.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_4.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_5.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_6.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_7.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_8.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_9.eps}
+    \includegraphics[width=.1\linewidth]{W_l_eigv_10.eps}
+    \caption{modes}
+  \end{subfigure}\par
+  \begin{subfigure}{\linewidth}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_2.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_3.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_4.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_5.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_6.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_7.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_8.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_9.eps}
+    \includegraphics[width=.1\linewidth]{X_l_eigv_10.eps}
+    \caption{modes}
+  \end{subfigure}
  \caption{Some grouped images}
 \end{figure}
 
