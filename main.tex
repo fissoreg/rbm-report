@@ -51,7 +51,7 @@ P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
 \begin{figure}
   \centering
   \includegraphics{rbm.png}
-  \caption{}
+  \caption{bipartite structure of a RBM}
 \end{figure}
 
 We see that the usual neuron activation function (the sigmoid function, which we indicated by \(\sigma\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: when negative, they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
@@ -116,7 +116,7 @@ The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, wh
     \includegraphics[width=\linewidth]{sv_distr_e40_b600.eps}
     \caption{}  
   \end{subfigure}
- \caption{Some grouped images}
+ \caption{\textbf{(a)} Singular values distribution of the initial random matrix compared to Marchenko-Pastur law. \textbf{(b)-(d)} With the training we can see some singular values strengthening and overcoming the threshold set by the Marchenko-Pastur law. \textbf{(e)} Distribution of the singular values after a long training: we can see many outliers spread above threshold and a spike of below-threshold singular values near zero}
 \end{figure}
 
 Starting with the training we see that many singular values increase in value and overcome the threshold for a gaussian random matrix; these are \textit{outliers} leaving the bulk, shown in fig. x. During the first epochs of the training this process is very fast and many \(\sigma_j\) are easily extracted from the bulk, growing of many orders of magnitude. The bulk is instead shrinked to low values, meaning that the \(\sigma_j\) which do not overcome the threshold decrease in magnitude. Going on with the training this process slows down but it does not stop: outliers keep growing slowly and the bulk keeps shrinking to approach a spike around zero. It is important to note that a kind of hierarchy is maintained in the process: the first outliers are never overcome by the newly extracted \(\sigma_j\), and this is made clear by looking at the corresponding left singular vectors (see next section).
@@ -168,7 +168,7 @@ Before focusing on the left singular vectors, we note that also the external vis
     \includegraphics[width=.1\linewidth]{X_l_eigv_10.eps}
     \caption{}
   \end{subfigure}
- \caption{Some grouped images}
+ \caption{\textbf{(a)} First mode learnt by the RBM with the external visible field initialized as a null vector. \textbf{(b)} External visible field initialized with rule y. \textbf{(c)} First principal components extracted from the training set. \textbf{(d)} The first 9 modes of a trained RBM when rule y has been used. \textbf{(e)} Principal components extracted from the training set (starting from the second).}
 \end{figure}
 
 The first 10 left singular vectors of a trained RBM are shown in fig. x. They are all composed by a homogeneous background on the borders and a set of alternating dark and light traits in the center, highlighting the fact that each singular vector acts globally on the visible layer. Even if the pictures seen in fig. x are quite different one from another, an interesting trend is found: a higher number of alternating traits is present in the successive vectors. At this point it is useful to draw a comparison to the Fourier decomposition of an image and interpret the left singular values as the \textit{modes} composing the activation pattern. The first singular vectors, characterized by a small number of alternating traits, play the role of the \textit{low frequency} modes while the successive modes act as \textit{high frequency} modes. The analogy to Fourier modes is suggested by the fact that we are basically performing Principal Component Analysis (PCA) over the matrix \textbf{W} and the left singular vectors can thus be identified with the principal modes of variation.
@@ -207,7 +207,7 @@ By looking at the singular values distribution of \textbf{W} we have seen that t
     \includegraphics[width=.8\linewidth]{difference40ep.png}
     \caption{}
   \end{subfigure}
- \caption{Some grouped images}
+  \caption{\textbf{(a)} The image shows some samples obtained with the trained RBM (after a 40 epochs training) and then "filtered" by eliminating the 400 weakest modes (just the 100 strongest modes are retained). \textbf{(b)} The images are composed by eliminating the 100 strongest modes to see what the weakest modes actually encode (20 epochs training). \textbf{(c)} As in \textbf{(b)} but after a 40 epochs training.}
 \end{figure}
 
 \input{bib.tex}
