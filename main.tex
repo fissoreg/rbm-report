@@ -27,7 +27,7 @@
 
 \section{Introduction}
 
-\section{Training}
+\section{Overview of Restricted Boltzmann Machines}
 A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_i\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
 
 \begin{equation}
@@ -56,7 +56,7 @@ P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
   \label{fig:rbm}
 \end{figure}
 
-We see that the usual neuron activation function (the sigmoid function, which we indicated by \(\sigma\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: when negative, they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
+We see that the usual neuron activation function (the sigmoid function, which we indicated by \(\sigma\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
 
 What we are interested in is the probability for the visible units, which is the layer we use to represent data. It can be easily defined as
 
@@ -75,7 +75,9 @@ F(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumbe
 
 To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) (and thus minimize the free energy) for the samples belonging to the training set. Once this is done, we can sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. The algorithms used to train and sample RBMs are usually based on Monte Carlo methods. In particular, the most effective algorithms for training are \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. 
 
-\section{Spectral analysis}
+[include a section on TAP]
+
+\section{Singular Values Decomposition of a RBM}
 The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\textbf{a},\textbf{b}\) and the weights matrix \(\textbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\textbf{a}\) encode this information, it is sufficient to use the initialization rule
 
 \begin{equation}
@@ -95,7 +97,7 @@ In the context of a RBM, we can better specify the role of the SVD matrices:
 \begin{itemize}
 \item \textbf{U} encodes the singular vectors related to the visible layer and can therefore be visualized in the pixel space
 \item  \textbf{V} is related to the hidden layer and it is a square orthogonal matrix that can be interpreted as a rotation. 
-\item The singular values \( \{ {\sigma}_j \} \) contained in \textbf{\(\Sigma\)} can be thought of as scaling factors whose action is to weight the singular vectors composing \textbf{W}.
+\item The singular values \( {\sigma}_j \) contained in \textbf{\(\Sigma\)} can be thought of as scaling factors whose action is to weight the singular vectors composing \textbf{W}.
 \end{itemize}
 
 Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and looking at the corresponding left singular vectors during the training.
@@ -133,14 +135,16 @@ The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, wh
  \caption{\textbf{(a)} Singular values distribution of the initial random matrix compared to Marchenko-Pastur law. \textbf{(b)-(d)} With the training we can see some singular values strengthening and overcoming the threshold set by the Marchenko-Pastur law. \textbf{(e)} Distribution of the singular values after a long training: we can see many outliers spread above threshold and a spike of below-threshold singular values near zero}
 \end{figure}
 
-Starting with the training we see that many singular values increase in value and overcome the threshold for a gaussian random matrix; these are \textit{outliers} leaving the bulk, shown in fig. \ref{fig:sv1}-\ref{fig:sv3}. During the first epochs of the training this process is very fast and many \(\sigma_j\) are easily extracted from the bulk, growing of many orders of magnitude. The bulk is instead shrinked to low values, meaning that the \(\sigma_j\) which do not overcome the threshold decrease in magnitude. Going on with the training this process slows down but it does not stop: outliers keep growing slowly and the bulk keeps shrinking to approach a spike around zero. It is important to note that a kind of hierarchy is maintained in the process: the first outliers are never overcome by the newly extracted \(\sigma_j\), and this is made clear by looking at the corresponding left singular vectors (see next section).
+Starting with the training we see that many singular values increase in magnitude and overcome the threshold for a gaussian random matrix; these are \textit{outliers} leaving the bulk, shown in fig. \ref{fig:sv1}-\ref{fig:sv3}. During the first epochs of the training this process is very fast and many \(\sigma_j\) are easily extracted from the bulk, growing of many orders of magnitude. The bulk is instead shrinked to low values, meaning that the \(\sigma_j\) that do not overcome the threshold decrease in magnitude. Going on with the training this process slows down but it does not stop: outliers keep growing slowly and the bulk keeps shrinking to approach a spike around zero. It is important to note that a kind of hierarchy is maintained in the process: the first outliers are never overcome by the newly extracted \(\sigma_j\), and this is made clear by looking at the corresponding left singular vectors (see next section).
 After a long training the singular values \(\sigma_j\) are separated into two categories: a concentrated set of almost-null singular values and a set of outliers spread above the threshold, as shown in fig. \ref{fig:sv4}.
 
-The evolution of the \(\sigma_j\) distribution described above suggests that the training process is able to discern between the \textit{most important} singular vectors, which are brought above threshold, and a bulk of \textit{less important} singular vectors, which are practically eliminated by cutting down the corresponding \(\sigma_j\). This is a good indication about what are the dynamics of the learning process, but it is not really satisfactory. In particular, some matters need to be addressed: (i) what do singular vectors represent?, (ii) what is the meaning of \textit{more} and \textit{less} important?, (iii) when to stop the learning?
+The evolution of the \(\sigma_j\) distribution described above suggests that the training process is able to discern between the \textit{most important} singular vectors, that are brought above threshold first and heavily strengthen, and a bulk of \textit{less important} singular vectors, that end up above threshold but whose \( \sigma_j\) reach values order of magnitude smaller then those of the strongest singular vectors. Moreover, the below-threshold singular vectors are practically eliminated by cutting down the corresponding \(\sigma_j\).
+
+These observations give a good indication about what are the dynamics of the learning process, but there are some matters that need to be addressed: (i) it is not clear what singular vectors actually represent, (ii) the meaning of \textit{more} and \textit{less} important singular vectors has to be specified, (iii) no clues about stopping criteria for the learning are given.
 
 \subsection{Analysis of left singular vectors}
 
-To understand the role of the left singular vectors of a RBM we must keep in mind the interpretation for the SVD decomposition of \textbf{W} given previously. We have seen how the matrix of the weights \textbf{\(\Sigma\)} is shaped during the learning, and we recall that \textbf{V} is interpreted as a rotation in the space of the hidden units. We then expect to recover the structure of the training data into the \textbf{U} matrix, and to show that we carefully analyze the left singular vectors during training by visualizing them in the pixel space.
+To understand the role of the left singular vectors of a RBM we must keep in mind the interpretation for the SVD decomposition of \textbf{W} given previously. We have seen how the matrix of the weights \textbf{\(\Sigma\)} is shaped during the learning, and we recall that \textbf{V} is interpreted as a rotation in the space of the hidden units. We then expect to recover the structure of the training data into the \textbf{U} matrix, and to show this we carefully analyze the left singular vectors during training by visualizing them in the pixel space.
 
 Before focusing on the left singular vectors, we note that also the external visible field can be visualized in the pixel space. With the initialization rule \eqref{eq:bias_init} we are able to encode into the field the mean activation of the visible layer, which is clearly shown in fig. \ref{fig:vbias} in the pixel space. If we instead initialize the visible field with a null vector, the mean activation pattern is learnt very effectively as the strongest left singular value. The striking resemblance between the mean activation pattern computed from the training data and the one learnt by the RBM is shown in fig. \ref{fig:m1tr}-\ref{fig:vbias} and it serves as a first example of what the left singular vectors represent. It seems then equivalent to either encode the mean activation pattern into the visible field since the beginning or letting the RBM learn such a pattern as a left singular vector. In practice the second case is not desirable as the RBM associates to the mean activation pattern a very strong singular value, many order of magnitudes higher then the strongest outliers. This results in a bias in the sampling from the trained machine, such that the samples whose activation pattern is nearest to the mean are sampled with a higher frequency (in the worst case those are the only configurations sampled at equilibrium).
 
@@ -204,8 +208,6 @@ Summarizing, the analysis of the left singular vectors gives many insights on th
 \item by continuing the training, new modes at increasing higher frequency are learnt while the already learnt modes are strengthen
 \item the external visible field is equivalent to a left singular vector but we can avoid to learn it by using the appropriate initial conditions
 \end{itemize}
-
-[they don't change with the epochs bla bla...].
 
 \section{Role of the modes}
 By looking at the singular values distribution of \textbf{W} we have seen that there seem to be \textit{more} and \textit{less important} singular vectors. In the previous section we have then refined this observation by highlighting how the lowest-frequency modes are given the highest weights. We can then identify the more (less) important modes as the low (high) frequency ones. To gain some intuition about the meaning of this separation we can take our analogy further and think about the Fourier decomposition of a square wave; in such a case, the superposition of the low frequency harmonics is sufficient to build a good approximation of a square wave, while the role of the high frequency harmonics is that of sharpening the waveform at the discontinuity points. In the context of a trained RBM, we then expect that good approximations to the training data are obtained by exploiting only the low frequency modes, while the high frequency modes should represent minor corrections. Confirmation to our expectations is presented in fig. \ref{fig:hf_modes}, in which high frequency modes are shown to just provide boundary corrections.
