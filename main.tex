@@ -103,7 +103,19 @@ In the context of a RBM, we can better specify the role of the SVD matrices:
 Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and looking at the corresponding left singular vectors during the training.
 
 \subsection{Distribution of the singular values}
-The weights matrix \(\textbf{W}\) is initialized as a gaussian random matrix, whose singular values distribution is known to be given by the Marchenko-Pastur law. Fig. \ref{fig:mp_fit} shows the agreement between the empirical distribution and the theoretical distribution. In particular, we note how all \(\sigma_j\) have values below the threshold set by the Marchenko-Pastur law, forming a \textit{bulk} of singular values.
+The weights matrix W is initialized as a gaussian random matrix with variance \(\sigma_v\) (and zero mean). The eigenvalues distribution of the corresponding symmetric square matrix \textbf{ \(W^T W \) } is known to be given by the Marchenko-Pastur law in its canonical form. The singular values \(\sigma_j\) are related to the eigenvalues \(\lambda_j\) by y, and by defining the parameter \( r = P/D \), with \(P\) the size of the hidden layer and \(D\) the size of the visible layer (we recall that \textbf{\(W\)} is a \(D \times P\) matrix), the expression of the Marchenko-Pastur law is given by (in the limit \( P,D \to \infty \) with \(r\) finite)
+
+\begin{equation}
+\nu (\lambda) = \frac{1}{2 \pi \sigma_v^2} \frac{\sqrt{(\lambda - r_-)(r_+ - \lambda)}}{r \lambda}
+\end{equation}
+
+where the higher and lower bounds \(r_{\pm}\) are
+
+\begin{equation}
+r_{\pm} = \sigma_v^2 \left(1 \pm \sqrt{r} \right)^2
+\end{equation}
+
+Fig. \ref{fig:mp_fit} shows the agreement between the empirical distribution and the theoretical distribution. In particular, we note how all \(\sigma_j\) have values below the threshold set by the Marchenko-Pastur law, forming a \textit{bulk} of singular values.
 
 \begin{figure}
   \centering
