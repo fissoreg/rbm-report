@@ -85,13 +85,53 @@ a_i = \log[p_i/(1-p_i)]
 \label{eq:bias_init}
 \end{equation}
 
-as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \textbf{W} during the training, given by
+as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \textbf{W} during the training.
+
+\subsection{Informal introduction to Singular Value Decomposition (SVD) and Principal Component Analysis (PCA)}
+The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a \(n \times p\) data matrix \textbf{\(X\)} where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define the related covariance matrice (square and symmetric)
 
 \begin{equation}
-\textbf{W} = \textbf{U\(\Sigma V^T \) } 
+\textbf{C} = \frac{\textbf{X}^T \textbf{X}}{n-1}
 \end{equation}
 
-where the columns of \textbf{U} and \textbf{V} are respectively the left and right singular vectors and \textbf{\(\Sigma\)} is the diagonal matrix of the singular values in decreasing order. 
+that can be diagonalized
+
+\begin{equation}
+\textbf{C} = \textbf{V L V}^T
+\end{equation}
+
+where the columns of \textbf{\(V\)} are eigenvectors of \textbf{\(C\)} and \textbf{\(L\)} is the diagonal matrix of the eigenvalues \(\lambda_i\). Projecting the samples over the eigenvectors of the covariance matrix (also called \textit{principal directions} in the context of PCA) we obtain the \textit{principal components}: new, independent variables that account for the maximum possible variability in the data. More precisely, the first \textit{principal component} maximizes the variance of the projections of the data (i.e. it has the highest possible variance) and the succeeding components maximize the variance while satisfying the constraints of being orthogonal to the preceeding components. A rigorous demonstration of the properties of \textit{principal components} is given in [].
+
+The Singular Value Decomposition (SVD) is the generalization of eigenmodes decomposition to rectangular matrices, and it is given by
+
+\begin{equation}
+\textbf{X} = \textbf{U \(\Sigma\)} \textbf{V}^T
+\end{equation}
+
+where \(\textbf{U}\) is an orthogonal \(n \times p\)  matrix whose columns are the \textit{left singular vectors} \(\mathbf{\mu}_j \), \textbf{\(V\)} is an orthogonal \(p \times p\) matrix whose columns are the \textit{right singular vectors} \( \mathbf{\nu}_j \) and \( \textbf{\(\Sigma\)} \) is a diagonal \(p \times p\) matrix whose elements are the singular values \(\sigma_j\). The separation into left and right singular vectors is due to the rectangular nature of the decomposed matrix, and the similarity with eigenmodes decomposition is revealed by the following SVD equations
+
+\begin{align}
+\mathbf{X \nu} & = \textbf{\(\sigma \mu\)} \\ \nonumber
+X^T \mu & = \sigma \nu
+\end{align}
+
+Plugging the SVD of \textbf{\(X\)} into the definition of covariance matrix
+
+\begin{align}
+C & = \frac{X^T X}{n-1} = \frac{V \Sigma U^T U \Sigma V^T}{n-1}  \\ \nonumber
+& = V \frac{\Sigma^2}{n-1} V^T \nonumber 
+\end{align}
+
+we see how the \textit{right singular vectors} can be identified as the \textit{principal directions} and a relation between the singular values \(\sigma_j\) and the eigenvalues of the covariance matrice \(\lambda_j\) is easily found
+
+\begin{equation}
+\lambda_j = \frac{\sigma_j}{n-1}
+\end{equation}
+
+Finally, the \textit{principal components} are given by \(U \Sigma\) (\(XV = U \Sigma V^T V = U \Sigma\)).
+
+[mean-field equations]
+
 In the context of a RBM, we can better specify the role of the SVD matrices:
 
 \begin{itemize}
