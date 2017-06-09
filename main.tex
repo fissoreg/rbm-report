@@ -27,7 +27,7 @@
 
 \section{Introduction}
 
-\section{Overview of Restricted Boltzmann Machines}
+\section{Overview of Restricted Boltzmann Machines} \label{training}
 A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_i\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
 
 \begin{equation}
@@ -44,9 +44,14 @@ where \(Z = \sum_{\textbf{h},\textbf{v}} e^{-E(\textbf{h},\textbf{v})}\) is the 
 
 \begin{align}
 P(v_i = 1 | \textbf{h}) &  = \frac{1}{1+e^{-a_i - \sum_{j} w_{ij} h_j}} \nonumber \\
-& = \sigma \left(a_i + \sum_{j} w_{ij} h_j \right) \\
+& = \sigma \left(a_i + \sum_{j} w_{ij} h_j \right)
+\label{eq:act_vis}
+\end{align}
+
+\begin{align}
 P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
 & = \sigma \left(b_j + \sum_i w_{ij} v_i \right)
+\label{eq:act_hid}
 \end{align}
 
 \begin{figure}
@@ -111,8 +116,8 @@ The Singular Value Decomposition (SVD) is the generalization of eigenmodes decom
 where \(\textbf{U}\) is an orthogonal \(n \times p\)  matrix whose columns are the \textit{left singular vectors} \(\mathbf{\mu}_j \), \textbf{\(V\)} is an orthogonal \(p \times p\) matrix whose columns are the \textit{right singular vectors} \( \mathbf{\nu}_j \) and \( \textbf{\(\Sigma\)} \) is a diagonal \(p \times p\) matrix whose elements are the singular values \(\sigma_j\). The separation into left and right singular vectors is due to the rectangular nature of the decomposed matrix, and the similarity with eigenmodes decomposition is revealed by the following SVD equations
 
 \begin{align}
-\mathbf{X \nu} & = \textbf{\(\sigma \mu\)} \\ \nonumber
-X^T \mu & = \sigma \nu
+\mathbf{X} \mathbf{\nu}_j & = \sigma_j \mathbf{\mu}_j \\ \nonumber
+\mathbf{X}^T \mathbf{\mu}_j & = \sigma_j \mathbf{\nu}_j
 \end{align}
 
 Plugging the SVD of \textbf{\(X\)} into the definition of covariance matrix
@@ -131,13 +136,70 @@ we see how the \textit{right singular vectors} can be identified as the \textit{
 
 Finally, the \textit{principal components} are given by \(U \Sigma\) (\(XV = U \Sigma V^T V = U \Sigma\)).
 
-[mean-field equations]
+In the context of a RBM, we are interested in analyzing the SVD of the weights matrix \(\mathbf{W}\)
 
-In the context of a RBM, we can better specify the role of the SVD matrices:
+\begin{equation}
+\mathbf{W} = \mathbf{U \Sigma V}^T
+\end{equation}
+
+Motivation for this analysis is suggested by looking at the linearized mean-field equations of our model. As there are not connections among variables in the same layer, the magnetizations \(m_i^v,m_j^h\) are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid} and the mean-field equations are
+
+\begin{equation}
+m_i^v = sigm \left(a_i + \sum_{j} w_{ij} m_j^h \right)
+\end{equation}
+
+\begin{equation}
+m_j^h = sigm \left(b_j + \sum_i w_{ij} m^v_i \right)
+\end{equation}
+
+In section \ref{training} we have seen that the weights \(w_{i,j}\) are small (both at the beginning and after the training) and how we can get rid of the external visible field by centering the training data. The external hidden field is instead initialized to zero and it varies slowly, so it doesn't have any effects at the beginning of the training. Thus, neglecting both the external fields we can linearize the mean-field equations to obtain (defining \( \tilde{m}_i^v = m_i^v - 1/2, \tilde{m}_j^h = m_j^h - 1/2 \) for convenience)
+
+\begin{equation}
+\tilde{m}_i^v \simeq \frac{1}{4} \sum_j w_{i,j} \tilde{m}_j^h
+\end{equation}
+
+\begin{equation}
+\tilde{m}_j^h \simeq \frac{1}{4} \sum_i w_{i,j} \tilde{m}_i^v
+\end{equation}
+
+We can now express the weights \(w_{i,j}\) in terms of the SVD as
+
+\begin{equation}
+w_{i,j} = \sum_{\alpha} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha}
+\end{equation}
+
+and expand the magnetizations over the singular vectors
+
+\begin{equation}
+\tilde{m}_{\alpha}^v = \sum_i u_{i,\alpha} \tilde{m}_i^v
+\end{equation}
+
+\begin{equation}
+\tilde{m}_{\alpha}^h = \sum_j v_{j,\alpha} \tilde{m}_j^h
+\end{equation}
+
+Combining eq. \eqref{eq:mf_vis},\eqref{eq:w_exp},\eqref{mv_exp} and recalling that the columns of \(\mathbf{U}\) form an orthonormal basis, we get
+
+\begin{align}
+\tilde{m}_{\alpha}^v & = \frac{1}{4} \sum_{\alpha '} \sigma_{\alpha} \delta_{\alpha,\alpha '} \tilde{m}_{\alpha}^h \\ \nonumber
+& = \frac{1}{4} \sigma_{\alpha} \tilde{m}_{\alpha}^h \nonumber
+\end{align}
+
+We can proceed in an analogous way with \(\tilde{m}_{\alpha}^h\) to finally obtain the coupled linear equations
+
+\begin{equation}
+\tilde{m}_{\alpha}^v = \frac{1}{4} \sigma_{\alpha} \tilde{m}_{\alpha}^h
+\end{equation}
+
+\begin{equation}
+\tilde{m}_{\alpha}^h = \frac{1}{4} \sigma_{\alpha} \tilde{m}_{\alpha}^v
+\end{equation}
+
+These equations show how the magnetizations aligned to the singular vectors with a strong \(\sigma_{\alpha}\) are amplified, while magnetizations related to small \(\sigma_{\alpha}\) are penalized. We then expect the samples generated by a trained RBM to be affine to the strongest singular vectors, and we can try to understand how. To this end, we can better specify the role of the SVD matrices in the context of a RBM:
 
 \begin{itemize}
-\item \textbf{U} encodes the singular vectors related to the visible layer and can therefore be visualized in the pixel space
-\item  \textbf{V} is related to the hidden layer and it is a square orthogonal matrix that can be interpreted as a rotation. 
+\item \textbf{U} encodes the singular vectors related to the visible layer; these can be visualized in the pixel space and basically consist in the principal components of \(\mathbf{W}\).
+\item  \textbf{V} is related to the hidden layer; it is a square orthogonal matrix that can be interpreted as a rotation and its columns are the principal directions of \(\mathbf{W}\).
 \item The singular values \( {\sigma}_j \) contained in \textbf{\(\Sigma\)} can be thought of as scaling factors whose action is to weight the singular vectors composing \textbf{W}.
 \end{itemize}
 
