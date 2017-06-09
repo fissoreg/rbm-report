@@ -126,6 +126,7 @@ we see how the \textit{right singular vectors} can be identified as the \textit{
 
 \begin{equation}
 \lambda_j = \frac{\sigma_j}{n-1}
+\label{eq:ls_map}
 \end{equation}
 
 Finally, the \textit{principal components} are given by \(U \Sigma\) (\(XV = U \Sigma V^T V = U \Sigma\)).
@@ -143,10 +144,10 @@ In the context of a RBM, we can better specify the role of the SVD matrices:
 Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and looking at the corresponding left singular vectors during the training.
 
 \subsection{Distribution of the singular values}
-The weights matrix W is initialized as a gaussian random matrix with variance \(\sigma_v\) (and zero mean). The eigenvalues distribution of the corresponding symmetric square matrix \textbf{ \(W^T W \) } is known to be given by the Marchenko-Pastur law \cite{MP_law} in its canonical form. The singular values \(\sigma_j\) are related to the eigenvalues \(\lambda_j\) by y, and by defining the parameter \( r = P/D \), with \(P\) the size of the hidden layer and \(D\) the size of the visible layer (we recall that \textbf{\(W\)} is a \(D \times P\) matrix), the expression of the Marchenko-Pastur law is given by (in the limit \( P,D \to \infty \) with \(r\) finite)
+The weights matrix W is initialized as a gaussian random matrix with variance \(\sigma_v\) (and zero mean). The eigenvalues distribution of the corresponding symmetric square matrix \(\mathbf{W}^T \mathbf{W} \) is known to be given by the Marchenko-Pastur law \cite{MP_law} in its canonical form. The singular values \(\sigma_j\) are related to the eigenvalues \(\lambda_j\) by \eqref{eq:ls_map}, and by defining the parameter \( r = p/d \), with \(p\) the size of the hidden layer and \(d\) the size of the visible layer (we recall that \(\mathbf{W}\) is a \(d \times p\) matrix), the expression of the Marchenko-Pastur law is given by (in the limit \( p,d \to \infty \) with \(r\) finite)
 
 \begin{equation}
-\nu (\lambda) = \frac{1}{2 \pi \sigma_v^2} \frac{\sqrt{(\lambda - r_-)(r_+ - \lambda)}}{r \lambda}
+\rho (\lambda) = \frac{1}{2 \pi \sigma_v^2} \frac{\sqrt{(\lambda - r_-)(r_+ - \lambda)}}{r \lambda}
 \end{equation}
 
 where the higher and lower bounds \(r_{\pm}\) are
@@ -198,7 +199,7 @@ These observations give a good indication about what are the dynamics of the lea
 
 To understand the role of the left singular vectors of a RBM we must keep in mind the interpretation for the SVD decomposition of \textbf{W} given previously. We have seen how the matrix of the weights \textbf{\(\Sigma\)} is shaped during the learning, and we recall that \textbf{V} is interpreted as a rotation in the space of the hidden units. We then expect to recover the structure of the training data into the \textbf{U} matrix, and to show this we carefully analyze the left singular vectors during training by visualizing them in the pixel space.
 
-Before focusing on the left singular vectors, we note that also the external visible field can be visualized in the pixel space. With the initialization rule \eqref{eq:bias_init} we are able to encode into the field the mean activation of the visible layer, which is clearly shown in fig. \ref{fig:vbias} in the pixel space. If we instead initialize the visible field with a null vector, the mean activation pattern is learnt very effectively as the strongest left singular value. The striking resemblance between the mean activation pattern computed from the training data and the one learnt by the RBM is shown in fig. \ref{fig:m1tr}-\ref{fig:vbias} and it serves as a first example of what the left singular vectors represent. It seems then equivalent to either encode the mean activation pattern into the visible field since the beginning or letting the RBM learn such a pattern as a left singular vector. In practice the second case is not desirable as the RBM associates to the mean activation pattern a very strong singular value, many order of magnitudes higher then the strongest outliers. This results in a bias in the sampling from the trained machine, such that the samples whose activation pattern is nearest to the mean are sampled with a higher frequency (in the worst case those are the only configurations sampled at equilibrium).
+Before focusing on the left singular vectors, we note that also the external visible field can be visualized in the pixel space. With the initialization rule \eqref{eq:bias_init} we are able to encode into the field the mean activation of the visible layer, which is clearly shown in fig. \ref{fig:vbias} in the pixel space. If we instead initialize the visible field with a null vector, the mean activation pattern is learnt very effectively as the strongest left singular vector. The striking resemblance between the mean activation pattern computed from the training data and the one learnt by the RBM is shown in fig. \ref{fig:m1tr}-\ref{fig:vbias} and it serves as a first example of what the left singular vectors represent. It seems then equivalent to either encode the mean activation pattern into the visible field since the beginning or letting the RBM learn such a pattern as a left singular vector. In practice the second case is not desirable as the RBM associates to the mean activation pattern a very strong singular value, many order of magnitudes higher then the strongest outliers. This results in a bias in the sampling from the trained machine, such that the samples whose activation pattern is nearest to the mean are sampled with a higher frequency (in the worst case those are the only configurations sampled at equilibrium).
 
 \begin{figure}
   \centering
@@ -260,6 +261,14 @@ Summarizing, the analysis of the left singular vectors gives many insights on th
 \item by continuing the training, new modes at increasing higher frequency are learnt while the already learnt modes are strengthen
 \item the external visible field is equivalent to a left singular vector but we can avoid to learn it by using the appropriate initial conditions
 \end{itemize}
+
+Finally, the above observations suggest that the weights matrix of a trained RBM is composed by two classes of modes and we can express its components as
+
+\begin{equation}
+w_{i,j} = \sum_{\alpha \in bulk} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha} + \sum_{\alpha \in outliers} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha} 
+\end{equation}
+
+where \(u_{i,j}\) and \(v_{i,j}\) are the components of the \(\mathbf{U}\) and \(\mathbf{V}\) matrices of the SVD of \(\mathbf{W}\).
 
 \section{Role of the modes}
 By looking at the singular values distribution of \textbf{W} we have seen that there seem to be \textit{more} and \textit{less important} singular vectors. In the previous section we have then refined this observation by highlighting how the lowest-frequency modes are given the highest weights. We can then identify the more (less) important modes as the low (high) frequency ones. To gain some intuition about the meaning of this separation we can take our analogy further and think about the Fourier decomposition of a square wave; in such a case, the superposition of the low frequency harmonics is sufficient to build a good approximation of a square wave, while the role of the high frequency harmonics is that of sharpening the waveform at the discontinuity points. In the context of a trained RBM, we then expect that good approximations to the training data are obtained by exploiting only the low frequency modes, while the high frequency modes should represent minor corrections.
