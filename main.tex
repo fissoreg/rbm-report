@@ -83,48 +83,48 @@ To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) (and
 [include a section on TAP]
 
 \section{Singular Values Decomposition of a RBM}
-The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\textbf{a},\textbf{b}\) and the weights matrix \(\textbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\textbf{a}\) encode this information, it is sufficient to use the initialization rule
+The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
 
 \begin{equation}
 a_i = \log[p_i/(1-p_i)]
 \label{eq:bias_init}
 \end{equation}
 
-as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \textbf{W} during the training.
+as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \(\mathbf{W}\) during the training.
 
 \subsection{Informal introduction to Singular Value Decomposition (SVD) and Principal Component Analysis (PCA)}
-The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a \(n \times p\) data matrix \textbf{\(X\)} where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define the related covariance matrice (square and symmetric)
+The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a \(n \times p\) data matrix \(\mathbf{X}\)} where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define the related covariance matrice (square and symmetric)
 
 \begin{equation}
-\textbf{C} = \frac{\textbf{X}^T \textbf{X}}{n-1}
+\mathbf{C} = \frac{\mathbf{X}^T \mathbf{X}}{n-1}
 \end{equation}
 
 that can be diagonalized
 
 \begin{equation}
-\textbf{C} = \textbf{V L V}^T
+\mathbf{C} = \mathbf{V L V}^T
 \end{equation}
 
-where the columns of \textbf{\(V\)} are eigenvectors of \textbf{\(C\)} and \textbf{\(L\)} is the diagonal matrix of the eigenvalues \(\lambda_i\). Projecting the samples over the eigenvectors of the covariance matrix (also called \textit{principal directions} in the context of PCA) we obtain the \textit{principal components}: new, independent variables that account for the maximum possible variability in the data. More precisely, the first \textit{principal component} maximizes the variance of the projections of the data (i.e. it has the highest possible variance) and the succeeding components maximize the variance while satisfying the constraints of being orthogonal to the preceeding components. A rigorous demonstration of the properties of \textit{principal components} is given in [].
+where the columns of \(\mathbf{V}\) are eigenvectors of \(\mathbf{C}\) and \(\mathbf{L}\) is the diagonal matrix of the eigenvalues \(\lambda_i\). Projecting the samples over the eigenvectors of the covariance matrix (also called \textit{principal directions} in the context of PCA) we obtain the \textit{principal components}: new, independent variables that account for the maximum possible variability in the data. More precisely, the first \textit{principal component} maximizes the variance of the projections of the data (i.e. it has the highest possible variance) and the succeeding components maximize the variance while satisfying the constraints of being orthogonal to the preceeding components. A rigorous demonstration of the properties of \textit{principal components} is given in [].
 
 The Singular Value Decomposition (SVD) is the generalization of eigenmodes decomposition to rectangular matrices, and it is given by
 
 \begin{equation}
-\textbf{X} = \textbf{U \(\Sigma\)} \textbf{V}^T
+\mathbf{X} = \mathbf{U \(\Sigma\)} \mathbf{V}^T
 \end{equation}
 
-where \(\textbf{U}\) is an orthogonal \(n \times p\)  matrix whose columns are the \textit{left singular vectors} \(\mathbf{\mu}_j \), \textbf{\(V\)} is an orthogonal \(p \times p\) matrix whose columns are the \textit{right singular vectors} \( \mathbf{\nu}_j \) and \( \textbf{\(\Sigma\)} \) is a diagonal \(p \times p\) matrix whose elements are the singular values \(\sigma_j\). The separation into left and right singular vectors is due to the rectangular nature of the decomposed matrix, and the similarity with eigenmodes decomposition is revealed by the following SVD equations
+where \(\mathbf{U}\) is an orthogonal \(n \times p\)  matrix whose columns are the \textit{left singular vectors} \(\mathbf{\mu}_j \), \(\mathbf{V}\) is an orthogonal \(p \times p\) matrix whose columns are the \textit{right singular vectors} \( \mathbf{\nu}_j \) and \( \mathbf{\Sigma} \) is a diagonal \(p \times p\) matrix whose elements are the singular values \(\sigma_j\). The separation into left and right singular vectors is due to the rectangular nature of the decomposed matrix, and the similarity with eigenmodes decomposition is revealed by the following SVD equations
 
 \begin{align}
-\mathbf{X} \mathbf{\nu}_j & = \sigma_j \mathbf{\mu}_j \\ \nonumber
+\mathbf{X} \mathbf{\nu}_j & = \sigma_j \mathbf{\mu}_j \\
 \mathbf{X}^T \mathbf{\mu}_j & = \sigma_j \mathbf{\nu}_j
 \end{align}
 
-Plugging the SVD of \textbf{\(X\)} into the definition of covariance matrix
+Plugging the SVD of \(\mathbf{X}\) into the definition of covariance matrix
 
 \begin{align}
-C & = \frac{X^T X}{n-1} = \frac{V \Sigma U^T U \Sigma V^T}{n-1}  \\ \nonumber
-& = V \frac{\Sigma^2}{n-1} V^T \nonumber 
+\mathbf{C} & = \frac{\mathbf{X}^T \mathbf{X}}{n-1} = \frac{\mathbf{V \Sigma U}^T \mathbf{U \Sigma V}^T}{n-1}  \\ \nonumber
+& = \mathbf{V} \frac{\mathbf{\Sigma}^2}{n-1} \mathbf{V}^T \nonumber 
 \end{align}
 
 we see how the \textit{right singular vectors} can be identified as the \textit{principal directions} and a relation between the singular values \(\sigma_j\) and the eigenvalues of the covariance matrice \(\lambda_j\) is easily found
@@ -134,7 +134,7 @@ we see how the \textit{right singular vectors} can be identified as the \textit{
 \label{eq:ls_map}
 \end{equation}
 
-Finally, the \textit{principal components} are given by \(U \Sigma\) (\(XV = U \Sigma V^T V = U \Sigma\)).
+Finally, the \textit{principal components} are given by \(\mathbf{U \Sigma}\) (\(\mathbf{XV} = \mathbf{U \Sigma V}^T \mathbf{V} = \mathbf{U \Sigma}\)).
 
 In the context of a RBM, we are interested in analyzing the SVD of the weights matrix \(\mathbf{W}\)
 
@@ -156,34 +156,37 @@ In section \ref{training} we have seen that the weights \(w_{i,j}\) are small (b
 
 \begin{equation}
 \tilde{m}_i^v \simeq \frac{1}{4} \sum_j w_{i,j} \tilde{m}_j^h
+\label{eq:mf_vis}
 \end{equation}
 
 \begin{equation}
 \tilde{m}_j^h \simeq \frac{1}{4} \sum_i w_{i,j} \tilde{m}_i^v
 \end{equation}
 
-We can now express the weights \(w_{i,j}\) in terms of the SVD as
+We can now express the weights \(w_{i,j}\) in terms of the SVD as (\(u_{i,\alpha}\) identifies the \(i_{th}\) component of the \(\alpha_{th}\) columns of \(\mathbf{U}\), and analogous notation is used for \(\mathbf{V}\))
 
 \begin{equation}
 w_{i,j} = \sum_{\alpha} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha}
+\label{eq:w_exp}
 \end{equation}
 
 and expand the magnetizations over the singular vectors
 
 \begin{equation}
 \tilde{m}_{\alpha}^v = \sum_i u_{i,\alpha} \tilde{m}_i^v
+\label{eq:mv_exp}
 \end{equation}
 
 \begin{equation}
 \tilde{m}_{\alpha}^h = \sum_j v_{j,\alpha} \tilde{m}_j^h
 \end{equation}
 
-Combining eq. \eqref{eq:mf_vis},\eqref{eq:w_exp},\eqref{mv_exp} and recalling that the columns of \(\mathbf{U}\) form an orthonormal basis, we get
+Combining eq. \eqref{eq:mf_vis},\eqref{eq:w_exp},\eqref{eq:mv_exp} and recalling that the columns of \(\mathbf{U}\) form an orthonormal basis, we get
 
-\begin{align}
+\begin{align*}
 \tilde{m}_{\alpha}^v & = \frac{1}{4} \sum_{\alpha '} \sigma_{\alpha} \delta_{\alpha,\alpha '} \tilde{m}_{\alpha}^h \\ \nonumber
 & = \frac{1}{4} \sigma_{\alpha} \tilde{m}_{\alpha}^h \nonumber
-\end{align}
+\end{align*}
 
 We can proceed in an analogous way with \(\tilde{m}_{\alpha}^h\) to finally obtain the coupled linear equations
 
@@ -198,12 +201,12 @@ We can proceed in an analogous way with \(\tilde{m}_{\alpha}^h\) to finally obta
 These equations show how the magnetizations aligned to the singular vectors with a strong \(\sigma_{\alpha}\) are amplified, while magnetizations related to small \(\sigma_{\alpha}\) are penalized. We then expect the samples generated by a trained RBM to be affine to the strongest singular vectors, and we can try to understand how. To this end, we can better specify the role of the SVD matrices in the context of a RBM:
 
 \begin{itemize}
-\item \textbf{U} encodes the singular vectors related to the visible layer; these can be visualized in the pixel space and basically consist in the principal components of \(\mathbf{W}\).
-\item  \textbf{V} is related to the hidden layer; it is a square orthogonal matrix that can be interpreted as a rotation and its columns are the principal directions of \(\mathbf{W}\).
-\item The singular values \( {\sigma}_j \) contained in \textbf{\(\Sigma\)} can be thought of as scaling factors whose action is to weight the singular vectors composing \textbf{W}.
+\item \(\mathbf{U}\) encodes the singular vectors related to the visible layer; these can be visualized in the pixel space and basically consist in the principal components of \(\mathbf{W}\).
+\item  \(\mathbf{V}\) is related to the hidden layer; it is a square orthogonal matrix that can be interpreted as a rotation and its columns are the principal directions of \(\mathbf{W}\).
+\item The singular values \( {\sigma}_j \) contained in \(\mathbf{\Sigma}\) can be thought of as scaling factors whose action is to weight the singular vectors composing \(\mathbf{W}\).
 \end{itemize}
 
-Given the above characteristics we focused our attention on \textbf{\(\Sigma\)} and \textbf{U}, tracking the distribution of the singular values and looking at the corresponding left singular vectors during the training.
+Given the above characteristics we focused our attention on \(\mathbf{\Sigma}\) and \(\mathbf{U}\), tracking the distribution of the singular values and looking at the corresponding left singular vectors during the training.
 
 \subsection{Distribution of the singular values}
 The weights matrix W is initialized as a gaussian random matrix with variance \(\sigma_v\) (and zero mean). The eigenvalues distribution of the corresponding symmetric square matrix \(\mathbf{W}^T \mathbf{W} \) is known to be given by the Marchenko-Pastur law \cite{MP_law} in its canonical form. The singular values \(\sigma_j\) are related to the eigenvalues \(\lambda_j\) by \eqref{eq:ls_map}, and by defining the parameter \( r = p/d \), with \(p\) the size of the hidden layer and \(d\) the size of the visible layer (we recall that \(\mathbf{W}\) is a \(d \times p\) matrix), the expression of the Marchenko-Pastur law is given by (in the limit \( p,d \to \infty \) with \(r\) finite)
