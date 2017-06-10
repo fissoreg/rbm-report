@@ -1,4 +1,4 @@
-\documentclass{revtex4-1}
+\documentclass[twocolumn]{revtex4-1}
 
 \usepackage{amsmath}
 
@@ -27,7 +27,10 @@
 
 \section{Introduction}
 
-\section{Overview of Restricted Boltzmann Machines} \label{training}
+\section{Training Restricted Boltzmann Machines} \label{training}
+
+\subsection{Definition of the model}
+
 A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_i\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
 
 \begin{equation}
@@ -40,17 +43,17 @@ where \(a_i\) and \(b_i\) are \textit{external fields} acting respectively on th
 P(\textbf{h},\textbf{v}) = \frac{e^{-E(\textbf{h},\textbf{v})}}{Z}
 \end{equation}
 
-where \(Z = \sum_{\textbf{h},\textbf{v}} e^{-E(\textbf{h},\textbf{v})}\) is the \textit{partition function}. The probabilities of activations for visible and hidden units can be simply computed to be
+where \( \textstyle Z = \sum_{\textbf{h},\textbf{v}} e^{-E(\textbf{h},\textbf{v})}\) is the \textit{partition function}. The probabilities of activations for visible and hidden units can be simply computed to be
 
 \begin{align}
 P(v_i = 1 | \textbf{h}) &  = \frac{1}{1+e^{-a_i - \sum_{j} w_{ij} h_j}} \nonumber \\
-& = \sigma \left(a_i + \sum_{j} w_{ij} h_j \right)
+& = sigm \left(a_i + \sum_{j} w_{ij} h_j \right)
 \label{eq:act_vis}
 \end{align}
 
 \begin{align}
 P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
-& = \sigma \left(b_j + \sum_i w_{ij} v_i \right)
+& = sigm \left(b_j + \sum_i w_{ij} v_i \right)
 \label{eq:act_hid}
 \end{align}
 
@@ -61,13 +64,14 @@ P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
   \label{fig:rbm}
 \end{figure}
 
-We see that the usual neuron activation function (the sigmoid function, which we indicated by \(\sigma\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
+We see that the usual neuron activation function (the sigmoid function, which we indicated by \(sigm\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
 
 What we are interested in is the probability for the visible units, which is the layer we use to represent data. It can be easily defined as
 
 \begin{align}
 P(\textbf{v}) &  = \sum_{\textbf{h}} P(\textbf{h},\textbf{v}) \nonumber \\
 & = \frac{e^{-F(\textbf{v})}}{Z}, \quad Z = \sum_{\textbf{v}} e^{-F(\textbf{v})}
+\label{eq:p_model}
 \end{align}
 
 where, further exploiting the parallel with spin models, we have introduced the \textit{free energy}
@@ -78,9 +82,29 @@ F(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumbe
 & = -\sum_i a_i v_i -\sum_j \log \left( 1 +  e^{\left( b_j + \sum_i w_{ij} v_i \right)} \right)
 \end{align}
 
-To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) (and thus minimize the free energy) for the samples belonging to the training set. Once this is done, we can sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. The algorithms used to train and sample RBMs are usually based on Monte Carlo methods. In particular, the most effective algorithms for training are \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. 
+To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) for the samples belonging to the training set. This is done by performing gradient ascent over the log-likelihood \(\log P(\textbf{v})\), whose derivative with respect to the weights can be computed to be
 
-[include a section on TAP]
+\begin{equation*}
+\frac{\partial \log P(\textbf{v})}{\partial w_{i,j}} = \langle h_i v_j \rangle_{data} - \langle h_i v_j \rangle_{model}
+\end{equation*}
+
+where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical distribution of the training set (\( \textstyle P_{data}(\mathbf{v}) = 1/N \sum_{\mathbf{v}_n \in data} \delta (\mathbf{v} - \mathbf{v}_n ) \)) and 
+\(\langle \cdot \rangle_{model}\) denotes the average over the distribution \eqref{eq:p_model}. Introducing the \textit{learning rate} \(\alpha \) (as a parameter for gradient ascent) we obtain an update rule for the weights matrix
+
+\begin{equation}
+\Delta \mathbf{W} = \alpha \left( \langle \mathbf{v h}^T \rangle_{data} - \langle \mathbf{v h}^T \rangle_{model} \right)
+\end{equation}
+
+In the same way we can get the update rules for the external fields
+
+\begin{align}
+\Delta \mathbf{a} &= \alpha \\
+\Delta \mathbf{b} &= \alpha
+\end{align}
+
+Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as the partition function \(Z\) in \eqref{eq:p_model} is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{PCD}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
+
+\subsection{Training via extended mean-field}
 
 \section{Singular Values Decomposition of a RBM}
 The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
@@ -93,7 +117,8 @@ a_i = \log[p_i/(1-p_i)]
 as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \(\mathbf{W}\) during the training.
 
 \subsection{Informal introduction to Singular Value Decomposition (SVD) and Principal Component Analysis (PCA)}
-The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a \(n \times p\) data matrix \(\mathbf{X}\)} where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define the related covariance matrice (square and symmetric)
+
+The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a \(n \times p\) data matrix \(\mathbf{X}\) where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define the related covariance matrice (square and symmetric)
 
 \begin{equation}
 \mathbf{C} = \frac{\mathbf{X}^T \mathbf{X}}{n-1}
@@ -110,7 +135,7 @@ where the columns of \(\mathbf{V}\) are eigenvectors of \(\mathbf{C}\) and \(\ma
 The Singular Value Decomposition (SVD) is the generalization of eigenmodes decomposition to rectangular matrices, and it is given by
 
 \begin{equation}
-\mathbf{X} = \mathbf{U \(\Sigma\)} \mathbf{V}^T
+\mathbf{X} = \mathbf{U \Sigma} \mathbf{V}^T
 \end{equation}
 
 where \(\mathbf{U}\) is an orthogonal \(n \times p\)  matrix whose columns are the \textit{left singular vectors} \(\mathbf{\mu}_j \), \(\mathbf{V}\) is an orthogonal \(p \times p\) matrix whose columns are the \textit{right singular vectors} \( \mathbf{\nu}_j \) and \( \mathbf{\Sigma} \) is a diagonal \(p \times p\) matrix whose elements are the singular values \(\sigma_j\). The separation into left and right singular vectors is due to the rectangular nature of the decomposed matrix, and the similarity with eigenmodes decomposition is revealed by the following SVD equations
