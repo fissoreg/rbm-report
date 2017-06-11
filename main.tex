@@ -1,4 +1,4 @@
-\documentclass[twocolumn]{revtex4-1}
+\documentclass{revtex4-1}
 
 \usepackage{amsmath}
 
@@ -35,6 +35,7 @@ A Restricted Boltzmann Machine (RBM) is a model for neural networks which basica
 
 \begin{equation}
 E(\textbf{h},\textbf{v}) = - \sum_i a_i v_i - \sum_j b_j h_j - \sum_{i,j} v_i w_{ij} h_j
+\label{eq:ef}
 \end{equation}
 
 where \(a_i\) and \(b_i\) are \textit{external fields} acting respectively on the visible and hidden units. The probability of a certain configuration is then given by the Boltzmann measure (taking \(\beta = 1\))
@@ -88,11 +89,12 @@ To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) for 
 \frac{\partial \log P(\textbf{v})}{\partial w_{i,j}} = \langle h_i v_j \rangle_{data} - \langle h_i v_j \rangle_{model}
 \end{equation*}
 
-where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical distribution of the training set (\( \textstyle P_{data}(\mathbf{v}) = 1/N \sum_{\mathbf{v}_n \in data} \delta (\mathbf{v} - \mathbf{v}_n ) \)) and 
+where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical distribution of the training set (\( \textstyle P_{data}(\mathbf{v}) = \frac{1}{N} \sum_{\mathbf{v}_n \in data} \delta (\mathbf{v} - \mathbf{v}_n ) \)) and 
 \(\langle \cdot \rangle_{model}\) denotes the average over the distribution \eqref{eq:p_model}. Introducing the \textit{learning rate} \(\alpha \) (as a parameter for gradient ascent) we obtain an update rule for the weights matrix
 
 \begin{equation}
 \Delta \mathbf{W} = \alpha \left( \langle \mathbf{v h}^T \rangle_{data} - \langle \mathbf{v h}^T \rangle_{model} \right)
+\label{eq:w_up}
 \end{equation}
 
 In the same way we can get the update rules for the external fields
@@ -102,9 +104,33 @@ In the same way we can get the update rules for the external fields
 \Delta \mathbf{b} &= \alpha
 \end{align}
 
-Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as the partition function \(Z\) in \eqref{eq:p_model} is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{PCD}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
+Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as such term is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{PCD}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
 
-\subsection{Training via extended mean-field}
+
+\begin{align}
+\log P(\mathbf{v}) &= \log \frac{e^{-F_c(\mathbf{v})}}{Z} \\ \nonumber
+&= -F_c(\mathbf{v}) - F
+\end{align}
+
+where \( \textstyle F = - \log Z \) is the \textit{free energy} of the SK model and it corresponds to the intractable term. Introducing the inverse temperature \(\beta\) we can write the Boltzmann measure of the SK model where the role of the spins is played by the units of the RBM and the separation between visible and hidden layers is retained only to make the connection between the two models clear
+
+\begin{equation}
+P(\textbf{h},\textbf{v}) = \frac{e^{- \beta E(\textbf{h},\textbf{v})}}{Z}
+\end{equation}
+
+By means of a high-temperature expansion (\(\beta \to 0\)) \cite{ht_exp} it is then possible to obtain the Thouless-Anderson-Palmer (TAP) approximation to the free energy \cite{TAP} that, in the context of a RBM and truncated at second order, can be written as
+
+\begin{align}
+F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = & S(\mathbf{m}^v) + S(\mathbf{m}^h)\\ \nonumber
+&- \sum_i a_i m_i^v - \sum_j b_j m_j^h - \sum_{i,j} w_{i,j} m_i^v m_j^h \\ \nonumber
+&+ \sum_{i,j} \frac{w_{i,j}^2}{2} \left( m_i^v - {m_i^v}^2 \right) \left(m_j^v - {m_j^h}^2 \right)
+\label{eq:f_tap}
+\end{align}
+
+with \( \textstyle S(\mathbf{m}) = - \sum_i \left[ m_i \log m_i + (1 - m_i) \log (1 - m_i) \right] \).
+
+We note that \(F_{TAP}\) is expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\) which are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Given the approximation to the free energy \eqref{eq:f_tap} the optimization problem over the log-likelihood is greatly simplified: the average over the training samples \(\langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\langle \cdot \rangle_{model}\) is substituted by the minimization of the TAP free energy
+
 
 \section{Singular Values Decomposition of a RBM}
 The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
