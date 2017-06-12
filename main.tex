@@ -144,18 +144,30 @@ F \simeq F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h), \qquad \left. \fra
 To obtain \(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h\) it is then necessary to extremise \eqref{eq:f_tap} to obtain the following coupled equations
 
 \begin{align}
-m_i^v \simeq sigm \left\{ a_i + \sum_j \left[ w_{i,j} m_j^h - w_{i,j} \left( m_i^v - \frac{1}{2} \right) \left( m_j^h - {m_j^h}^2 \right) \right] \right\} \\
-m_j^h \simeq sigm \left\{ b_j + \sum_i \left[ w_{i,j} m_i^v - w_{i,j} \left( m_j^h - \frac{1}{2} \right) \left( m_i^v - {m_i^v}^2 \right) \right] \right\}
+m_i^v \simeq sigm \left\{ a_i + \sum_j \left[ w_{i,j} m_j^h - w_{i,j} \left( m_i^v - \frac{1}{2} \right) \left( m_j^h - {m_j^h}^2 \right) \right] \right\} \label{eq:tap_vis} \\
+m_j^h \simeq sigm \left\{ b_j + \sum_i \left[ w_{i,j} m_i^v - w_{i,j} \left( m_j^h - \frac{1}{2} \right) \left( m_i^v - {m_i^v}^2 \right) \right] \right\} \label{eq:tap_hid}
 \end{align}
 
-that can be solved by iteration \cite{PDC}. Finally, given the approximation to the free energy \eqref{eq:f_approx}, the optimization problem over the log-likelihood \eqref{eq:opt} is greatly simplified: the average over the training samples \(\textstyle \langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is substituted by the maximization of \eqref{eq:f_approx}. Summarizing, the training procedure based on TAP approximation is reported in algorithm x.
+that can be solved by iteration \cite{PDC}. Finally, given the approximation to the free energy \eqref{eq:f_approx}, the optimization problem over the log-likelihood \eqref{eq:opt} is greatly simplified: the average over the training samples \(\textstyle \langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is substituted by the maximization of \eqref{eq:f_approx}, giving
+
+\begin{equation}
+\Delta \mathbf{W} = \alpha \left( \langle \mathbf{v h}^T \rangle_{data} - \frac{\partial F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h)}{\partial w_{i,j}} \right)
+\label{eq:w_up_tap}
+\end{equation}
+
+Summarizing, the training procedure based on TAP approximation is reported in the following algorithm.
 
 \begin{algorithm}[H]
 \caption{Extended mean-field training}\label{alg:tap}
 \begin{algorithmic}[1]
-\State \textbf{Data:} training set
+\State \textbf{Data:} a training set of N data vectors
+\State Randomly initialize the weights matrix \textbf{W}
 \For{t = 0 to T (\# of epochs)}
-  \State fit
+  \ForAll{vectors in the training set}
+    \State initialize  \(m_j^h=P(h_j|\mathbf{v}),m_i^v=P(v_i|\mathbf{h})\)
+    \State iterate TAP equation \eqref{eq:tap_vis},\eqref{eq:tap_hid} to convergence to obtain \(\tilde{\mathbf{m}}^v,\tilde{\mathbf{m}}^h\)
+    \State update \(\mathbf{W}\) with eq. \eqref{eq:w_up_tap}
+  \EndFor
 \EndFor
 \end{algorithmic}
 \end{algorithm}
