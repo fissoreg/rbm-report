@@ -103,11 +103,11 @@ where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical dis
 In the same way we can get the update rules for the external fields
 
 \begin{align}
-\Delta \mathbf{a} &= \alpha \\
-\Delta \mathbf{b} &= \alpha
+\Delta \mathbf{a} &= \alpha \left( \mathbf{v}_{data} - \mathbf{v}_{model} \right) \\
+\Delta \mathbf{b} &= \alpha \left( \mathbf{h}_{data} - \mathbf{h}_{model} \right)
 \end{align}
 
-Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as such term is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{PCD}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
+Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as such term is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{tap_train}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
 
 \subsection{Training via extended mean-field} \label{sec:emf}
 We have already drawn attention to the similarities between the RBM model and spin models in statistical physics. In particular, the energy function \eqref{eq:ef} corresponds to the hamiltonian of the spin glass Sherrington-Kirkpatrick (SK) model \cite{SK} and this makes it possible to take advantage of well established results in spin glass theory to obtain a valid approximation to the intractable term in the update rule \eqref{eq:w_up}. In fact, looking back at the log-likelihood we can express it as
@@ -126,8 +126,8 @@ P(\textbf{h},\textbf{v}) = \frac{e^{- \beta E(\textbf{h},\textbf{v})}}{Z}
 By means of a high-temperature expansion (\(\beta \to 0\)) \cite{ht_exp} it is then possible to obtain the Thouless-Anderson-Palmer (TAP) expression for the free energy \cite{TAP} that, in the context of a RBM and truncated at second order, can be written as
 
 \begin{align}
-F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = &+ S(\mathbf{m}^v) + S(\mathbf{m}^h) \\ \nonumber
-&- \sum_i a_i m_i^v - \sum_j b_j m_j^h - \sum_{i,j} w_{i,j} m_i^v m_j^h \\ \nonumber
+F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = &+ S(\mathbf{m}^v) + S(\mathbf{m}^h) \nonumber \\
+&- \sum_i a_i m_i^v - \sum_j b_j m_j^h - \sum_{i,j} w_{i,j} m_i^v m_j^h \nonumber \\
 &+ \sum_{i,j} \frac{w_{i,j}^2}{2} \left( m_i^v - {m_i^v}^2 \right) \left(m_j^v - {m_j^h}^2 \right) \label{eq:f_tap}
 \end{align}
 
@@ -147,7 +147,7 @@ m_i^v \simeq sigm \left\{ a_i + \sum_j \left[ w_{i,j} m_j^h - w_{i,j} \left( m_i
 m_j^h \simeq sigm \left\{ b_j + \sum_i \left[ w_{i,j} m_i^v - w_{i,j} \left( m_j^h - \frac{1}{2} \right) \left( m_i^v - {m_i^v}^2 \right) \right] \right\} \label{eq:tap_hid}
 \end{align}
 
-that can be solved by iteration \cite{PDC}. Finally, given the approximation to the free energy \eqref{eq:f_approx}, the optimization problem over the log-likelihood \eqref{eq:opt} is greatly simplified: the average over the training samples \(\textstyle \langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is substituted by the maximization of \eqref{eq:f_approx}, giving
+that can be solved by iteration \cite{conv}. Finally, given the approximation to the free energy \eqref{eq:f_approx}, the optimization problem over the log-likelihood \eqref{eq:opt} is greatly simplified: the average over the training samples \(\textstyle \langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is substituted by the maximization of \eqref{eq:f_approx}, giving
 
 \begin{equation}
 \Delta \mathbf{W} = \alpha \left( \langle \mathbf{v h}^T \rangle_{data} - \frac{\partial F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h)}{\partial w_{i,j}} \right)
@@ -172,11 +172,11 @@ Summarizing, the training procedure based on TAP approximation is reported in th
 \end{algorithm}
 
 \subsection{Analysis of the learning}
-To assess the performance of the extended mean-field (EMF) training described in section \ref{sec:emf} we have trained a RBM using both PCD and EMF and compared the outcomes, implementing both algorithms following the guidelines given in \ref{Hinton_guide}. 
+To assess the performance of the extended mean-field (EMF) training described in section \ref{sec:emf} we have trained a RBM using both PCD and EMF and compared the outcomes, implementing both algorithms following the guidelines given in \cite{Hinton_guide}.
 
 The dataset we used is the MNIST database \cite{mnist}, a set of 70000 handwritten digits whose samples consist in \(28 \times 28\) pixels centered and size-normalized images. The first 60000 samples are used for training the RBM while the remaining 10000 samples constitute the test set, that is used to validate the training and monitoring for overfitting. Examples of the MNIST samples are shown in fig. \ref{fig:mnist}.
 
-Drawing samples from the trained distribution \(P(\mathbf{v},\mathbf{h})\) is done by performing Gibbs sampling \cite{bishop}, which basically consists in running a Markov chain to convergence. In the context of a RBM, as there are no links among units in the same layer, we can perform the sampling in blocks: starting from a visible configuration the conditional probability of the hidden layer is computed using \eqref{eq:act_hid} and this makes it possible to compute the conditional probability of the visible layer, starting a loop that if iterated long enough is guaranteed to produce samples approximating the joint probability distribution of all the variables. The sampling algorithm is reported below for clarity.
+Drawing samples from the trained distribution \(P(\mathbf{v},\mathbf{h})\) is done by performing Gibbs sampling \cite{gibbs}, which basically consists in running a Markov chain to convergence. In the context of a RBM, as there are no links among units in the same layer, we can perform the sampling in blocks: starting from a visible configuration the conditional probability of the hidden layer is computed using \eqref{eq:act_hid} and this makes it possible to compute the conditional probability of the visible layer, starting a loop that if iterated long enough is guaranteed to produce samples approximating the joint probability distribution of all the variables. The sampling algorithm is reported below for clarity.
 
 \begin{algorithm}[H]
 \caption{Gibbs sampling}\label{alg:gibbs}
