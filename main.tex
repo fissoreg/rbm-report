@@ -74,15 +74,14 @@ What we are interested in is the probability for the visible units, which is the
 
 \begin{align}
 P(\textbf{v}) &  = \sum_{\textbf{h}} P(\textbf{h},\textbf{v}) \nonumber \\
-& = \frac{e^{-F(\textbf{v})}}{Z}, \quad Z = \sum_{\textbf{v}} e^{-F(\textbf{v})}
+& = \frac{e^{-F_c(\textbf{v})}}{Z}, \quad Z = \sum_{\textbf{v}} e^{-F_c(\textbf{v})}
 \label{eq:p_model}
 \end{align}
 
-where, further exploiting the parallel with spin models, we have introduced the \textit{free energy}
+where, further exploiting the parallel with spin models, we have introduced the \textit{clamped free energy}
 
 \begin{align}
-F(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumber \\
-& = -\sum_i a_i v_i -\sum_j \log \sum_{h_j} e^{h_j \left( b_j + \sum_i w_{ij} v_i \right)} \nonumber \\
+F_c(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumber \\
 & = -\sum_i a_i v_i -\sum_j \log \left( 1 +  e^{\left( b_j + \sum_i w_{ij} v_i \right)} \right)
 \end{align}
 
@@ -110,7 +109,7 @@ In the same way we can get the update rules for the external fields
 
 Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as such term is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{PCD}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
 
-\subsection{Training via extended mean-field}
+\subsection{Training via extended mean-field} \label{sec:emf}
 We have already drawn attention to the similarities between the RBM model and spin models in statistical physics. In particular, the energy function \eqref{eq:ef} corresponds to the hamiltonian of the spin glass Sherrington-Kirkpatrick (SK) model \cite{SK} and this makes it possible to take advantage of well established results in spin glass theory to obtain a valid approximation to the intractable term in the update rule \eqref{eq:w_up}. In fact, looking back at the log-likelihood we can express it as
 
 \begin{align}
@@ -159,6 +158,28 @@ Summarizing, the training procedure based on TAP approximation is reported in th
 
 \begin{algorithm}[H]
 \caption{Extended mean-field training}\label{alg:tap}
+\begin{algorithmic}[1]
+\State \textbf{Data:} a training set of N data vectors
+\State Randomly initialize the weights matrix \textbf{W}
+\For{t = 0 to T (\# of epochs)}
+  \ForAll{vectors in the training set}
+    \State initialize  \(m_j^h=P(h_j|\mathbf{v}),m_i^v=P(v_i|\mathbf{h})\)
+    \State iterate TAP equation \eqref{eq:tap_vis},\eqref{eq:tap_hid} to convergence to obtain \(\tilde{\mathbf{m}}^v,\tilde{\mathbf{m}}^h\)
+    \State update \(\mathbf{W}\) with eq. \eqref{eq:w_up_tap}
+  \EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Analysis of the learning}
+To assess the performance of the extended mean-field (EMF) training described in section \ref{sec:emf} we have trained a RBM using both PCD and EMF and compared the outcomes, implementing both algorithms following the guidelines given in \ref{Hinton_guide}. 
+
+The dataset we used is the MNIST database \cite{mnist}, a set of 70000 handwritten digits whose samples consist in \(28 \times 28\) pixels centered and size-normalized images. The first 60000 samples are used for training the RBM while the remaining 10000 samples constitute the test set, that is used to validate the training and monitoring for overfitting. Examples of the MNIST samples are shown in fig. \ref{fig:mnist}.
+
+Drawing samples from the trained distribution \(P(\mathbf{v},\mathbf{h})\) is done by performing Gibbs sampling \cite{bishop}, which basically consists in running a Markov chain to convergence. In the context of a RBM, as there are no links among units in the same layer, we can perform the sampling in blocks: starting from a visible configuration the conditional probability of the hidden layer is computed using \eqref{eq:act_hid} and this makes it possible to compute the conditional probability of the visible layer, starting a loop that if iterated long enough is guaranteed to produce samples approximating the joint probability distribution of all the variables. The sampling algorithm is reported below for clarity.
+
+\begin{algorithm}[H]
+\caption{Gibbs sampling}\label{alg:gibbs}
 \begin{algorithmic}[1]
 \State \textbf{Data:} a training set of N data vectors
 \State Randomly initialize the weights matrix \textbf{W}
