@@ -106,6 +106,8 @@ In the same way we can get the update rules for the external fields
 
 Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as such term is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{PCD}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
 
+\subsection{Training via extended mean-field}
+We have already drawn attention to the similarities between the RBM model and spin models in statistical physics. In particular, the energy function \eqref{eq:ef} corresponds to the hamiltonian of the spin glass Sherrington-Kirkpatrick (SK) model \cite{SK} and this makes it possible to take advantage of well established results in spin glass theory to obtain a valid approximation to the intractable term in the update rule \eqref{eq:w_up}. In fact, looking back at the log-likelihood we can express it as
 
 \begin{align}
 \log P(\mathbf{v}) &= \log \frac{e^{-F_c(\mathbf{v})}}{Z} \\ \nonumber
@@ -129,7 +131,7 @@ F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = & S(\mathbf{m}^v) + S(\mathbf{m}^h)\\ \nonu
 
 with \( \textstyle S(\mathbf{m}) = - \sum_i \left[ m_i \log m_i + (1 - m_i) \log (1 - m_i) \right] \).
 
-We note that \(F_{TAP}\) is expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\) which are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Given the approximation to the free energy \eqref{eq:f_tap} the optimization problem over the log-likelihood is greatly simplified: the average over the training samples \(\langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\langle \cdot \rangle_{model}\) is substituted by the minimization of the TAP free energy
+We note that \(F_{TAP}\) is expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\) which are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Given the approximation to the free energy \eqref{eq:f_tap} the optimization problem over the log-likelihood is greatly simplified: the average over the training samples <> is unchanged while the intractable average over the model distribution <> is substituted by the minimization of the TAP free energy
 
 
 \section{Singular Values Decomposition of a RBM}
