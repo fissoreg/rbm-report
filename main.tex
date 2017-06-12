@@ -181,15 +181,12 @@ Drawing samples from the trained distribution \(P(\mathbf{v},\mathbf{h})\) is do
 \begin{algorithm}[H]
 \caption{Gibbs sampling}\label{alg:gibbs}
 \begin{algorithmic}[1]
-\State \textbf{Data:} a training set of N data vectors
-\State Randomly initialize the weights matrix \textbf{W}
-\For{t = 0 to T (\# of epochs)}
-  \ForAll{vectors in the training set}
-    \State initialize  \(m_j^h=P(h_j|\mathbf{v}),m_i^v=P(v_i|\mathbf{h})\)
-    \State iterate TAP equation \eqref{eq:tap_vis},\eqref{eq:tap_hid} to convergence to obtain \(\tilde{\mathbf{m}}^v,\tilde{\mathbf{m}}^h\)
-    \State update \(\mathbf{W}\) with eq. \eqref{eq:w_up_tap}
-  \EndFor
+\State \textbf{Init:} take a random sample \(\mathbf{v}\)
+\For{i=0 to k}
+  \State \( \mathbf{h} = P(\mathbf{h}|\mathbf{v}) \)
+  \State \( \mathbf{v} = P(\mathbf{v}|\mathbf{h}) \)
 \EndFor
+\State Set \(v_i = 1\) with probability \(P(v_i = 1|\mathbf{h})\)
 \end{algorithmic}
 \end{algorithm}
 
@@ -337,22 +334,22 @@ Fig. \ref{fig:mp_fit} shows the agreement between the empirical distribution and
 
 \begin{figure}
   \centering
-  \begin{subfigure}{.45\linewidth}
+  \begin{subfigure}{.25\linewidth}
     \includegraphics[width=\linewidth]{mp_fit.eps}
     \caption{}
     \label{fig:mp_fit}
   \end{subfigure}
-  \begin{subfigure}{.45\linewidth}
+  \begin{subfigure}{.25\linewidth}
     \includegraphics[width=\linewidth]{sv_distr_e1_b10.eps}
     \caption{}
     \label{fig:sv1}
   \end{subfigure}\par\medskip
-  \begin{subfigure}{.45\linewidth}
+  \begin{subfigure}{.25\linewidth}
     \includegraphics[width=\linewidth]{sv_distr_e1_b60.eps}
     \caption{}
     \label{fig:sv2}
   \end{subfigure}
-  \begin{subfigure}{.45\linewidth}
+  \begin{subfigure}{.25\linewidth}
     \includegraphics[width=\linewidth]{sv_distr_e1_b120.eps}
     \caption{} 
     \label{fig:sv3}
@@ -380,44 +377,44 @@ Before focusing on the left singular vectors, we note that also the external vis
 
 \begin{figure}
   \centering
-  \begin{subfigure}{.3\linewidth}
+  \begin{subfigure}{.15\linewidth}
     \includegraphics[width=\linewidth]{mode_1_training.eps}
     \caption{}
     \label{fig:m1tr}
   \end{subfigure}
-  \begin{subfigure}{.3\linewidth}
+  \begin{subfigure}{.15\linewidth}
     \includegraphics[width=\linewidth]{vbias.png}
     \caption{}
     \label{fig:vbias}
   \end{subfigure}
-  \begin{subfigure}{.3\linewidth}
+  \begin{subfigure}{.15\linewidth}
     \includegraphics[width=\linewidth]{X_l_eigv_1.eps}
     \caption{}
     \label{fig:m1data}
   \end{subfigure}\par\medskip
   \begin{subfigure}{\linewidth}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_2.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_3.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_4.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_5.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_6.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_7.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_8.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_9.eps}
-    \includegraphics[width=.1\linewidth]{W_l_eigv_10.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_2.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_3.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_4.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_5.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_6.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_7.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_8.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_9.eps}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_10.eps}
     \caption{}
     \label{fig:modes_tr}
   \end{subfigure}\par
   \begin{subfigure}{\linewidth}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_2.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_3.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_4.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_5.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_6.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_7.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_8.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_9.eps}
-    \includegraphics[width=.1\linewidth]{X_l_eigv_10.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_2.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_3.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_4.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_5.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_6.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_7.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_8.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_9.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_10.eps}
     \caption{}
     \label{fig:modes_data}
   \end{subfigure}
@@ -452,8 +449,8 @@ By looking at the singular values distribution of \(\mathbf{W}\) we have seen th
 
 \begin{figure}
   \includegraphics{SV_pl.eps}
+  \caption{Singular values}
   \label{fig:sv_pl}
-  \caption{}
 \end{figure}
 
 It is not clear, however, how we can discern between high and low frequency modes. Some hints to address this issue are given by looking at the value of the \(\sigma_j\) in decreasing order on a log-log plot (fig. \ref{fig:sv_pl}), in which an interesting picture emerges: the strongest \(\sigma_j\) are located far above threshold and are of comparable magnitude, followed by a tail of exponentially damped \(\sigma_j\). This picture is consistent across the training, the only difference being the damping cutoff that is increasing with the epochs. After a long training, however, the increase in the cutoff is very slow and this could serve as a signal to stop the learning, as such situation amounts to slowly strengthening singular values which are exponentially less important then the already learnt modes.
@@ -463,17 +460,17 @@ We are then driven to define the more important low frequency modes as the modes
 \begin{figure}
   \begin{subfigure}{\linewidth}
   	\centering
-    \includegraphics[width=.8\linewidth]{complete40ep.png}
+    \includegraphics[width=.4\linewidth]{complete40ep.png}
     \caption{}
   \end{subfigure}\par
   \begin{subfigure}{\linewidth}
   	\centering
-    \includegraphics[width=.8\linewidth]{difference20ep.png}
+    \includegraphics[width=.4\linewidth]{difference20ep.png}
     \caption{}  
   \end{subfigure}\par
   \begin{subfigure}{\linewidth}
   	\centering
-    \includegraphics[width=.8\linewidth]{difference40ep.png}
+    \includegraphics[width=.4\linewidth]{difference40ep.png}
     \caption{}
   \end{subfigure}
   \caption{\textbf{(a)} The image shows some samples obtained with the trained RBM (after a 40 epochs training) and then "filtered" by eliminating the 400 weakest modes (just the 100 strongest modes are retained). \textbf{(b)} The images are composed by eliminating the 100 strongest modes to see what the weakest modes actually encode (20 epochs training). \textbf{(c)} As in \textbf{(b)} but after a 40 epochs training.}
