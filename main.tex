@@ -6,6 +6,9 @@
 
 \usepackage{physics}
 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{epstopdf}
@@ -85,9 +88,10 @@ F(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonumbe
 
 To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) for the samples belonging to the training set. This is done by performing gradient ascent over the log-likelihood \(\log P(\textbf{v})\), whose derivative with respect to the weights can be computed to be
 
-\begin{equation*}
+\begin{equation}
 \frac{\partial \log P(\textbf{v})}{\partial w_{i,j}} = \langle h_i v_j \rangle_{data} - \langle h_i v_j \rangle_{model}
-\end{equation*}
+\label{eq:opt}
+\end{equation}
 
 where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical distribution of the training set (\( \textstyle P_{data}(\mathbf{v}) = \frac{1}{N} \sum_{\mathbf{v}_n \in data} \delta (\mathbf{v} - \mathbf{v}_n ) \)) and 
 \(\langle \cdot \rangle_{model}\) denotes the average over the distribution \eqref{eq:p_model}. Introducing the \textit{learning rate} \(\alpha \) (as a parameter for gradient ascent) we obtain an update rule for the weights matrix
@@ -120,19 +124,41 @@ where \( \textstyle F = - \log Z \) is the \textit{free energy} of the SK model 
 P(\textbf{h},\textbf{v}) = \frac{e^{- \beta E(\textbf{h},\textbf{v})}}{Z}
 \end{equation}
 
-By means of a high-temperature expansion (\(\beta \to 0\)) \cite{ht_exp} it is then possible to obtain the Thouless-Anderson-Palmer (TAP) approximation to the free energy \cite{TAP} that, in the context of a RBM and truncated at second order, can be written as
+By means of a high-temperature expansion (\(\beta \to 0\)) \cite{ht_exp} it is then possible to obtain the Thouless-Anderson-Palmer (TAP) expression for the free energy \cite{TAP} that, in the context of a RBM and truncated at second order, can be written as
 
 \begin{align}
-F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = & S(\mathbf{m}^v) + S(\mathbf{m}^h)\\ \nonumber
+F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = &+ S(\mathbf{m}^v) + S(\mathbf{m}^h) \\ \nonumber
 &- \sum_i a_i m_i^v - \sum_j b_j m_j^h - \sum_{i,j} w_{i,j} m_i^v m_j^h \\ \nonumber
-&+ \sum_{i,j} \frac{w_{i,j}^2}{2} \left( m_i^v - {m_i^v}^2 \right) \left(m_j^v - {m_j^h}^2 \right)
-\label{eq:f_tap}
+&+ \sum_{i,j} \frac{w_{i,j}^2}{2} \left( m_i^v - {m_i^v}^2 \right) \left(m_j^v - {m_j^h}^2 \right) \label{eq:f_tap}
 \end{align}
 
 with \( \textstyle S(\mathbf{m}) = - \sum_i \left[ m_i \log m_i + (1 - m_i) \log (1 - m_i) \right] \).
 
-We note that \(F_{TAP}\) is expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\) which are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Given the approximation to the free energy \eqref{eq:f_tap} the optimization problem over the log-likelihood is greatly simplified: the average over the training samples <> is unchanged while the intractable average over the model distribution <> is substituted by the minimization of the TAP free energy
+We note that \(F_{TAP}\) is expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\) which are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Following \cite{ht_exp} a valid approximation to the free energy \(F\) is given by the minimization of \eqref{eq:f_tap} with respect to the magnetizations
 
+\begin{equation}
+F \simeq F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h), \qquad \left. \frac{dF_{TAP}}{d \mathbf{m}} \right\rvert_{\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h} = 0
+\label{eq:f_approx}
+\end{equation}
+
+To obtain \(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h\) it is then necessary to extremise \eqref{eq:f_tap} to obtain the following coupled equations
+
+\begin{align}
+m_i^v \simeq sigm \left\{ a_i + \sum_j \left[ w_{i,j} m_j^h - w_{i,j} \left( m_i^v - \frac{1}{2} \right) \left( m_j^h - {m_j^h}^2 \right) \right] \right\} \\
+m_j^h \simeq sigm \left\{ b_j + \sum_i \left[ w_{i,j} m_i^v - w_{i,j} \left( m_j^h - \frac{1}{2} \right) \left( m_i^v - {m_i^v}^2 \right) \right] \right\}
+\end{align}
+
+that can be solved by iteration \cite{PDC}. Finally, given the approximation to the free energy \eqref{eq:f_approx}, the optimization problem over the log-likelihood \eqref{eq:opt} is greatly simplified: the average over the training samples \(\textstyle \langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is substituted by the maximization of \eqref{eq:f_approx}. Summarizing, the training procedure based on TAP approximation is reported in algorithm x.
+
+\begin{algorithm}[H]
+\caption{Extended mean-field training}\label{alg:tap}
+\begin{algorithmic}[1]
+\State \textbf{Data:} training set
+\For{t = 0 to T (\# of epochs)}
+  \State fit
+\EndFor
+\end{algorithmic}
+\end{algorithm}
 
 \section{Singular Values Decomposition of a RBM}
 The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
