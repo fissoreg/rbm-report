@@ -133,7 +133,7 @@ F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = &+ S(\mathbf{m}^v) + S(\mathbf{m}^h) \nonum
 
 with \( \textstyle S(\mathbf{m}) = - \sum_i \left[ m_i \log m_i + (1 - m_i) \log (1 - m_i) \right] \).
 
-We note that \(F_{TAP}\) is expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\) which are given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Following \cite{ht_exp} a valid approximation to the free energy \(F\) is given by the minimization of \eqref{eq:f_tap} with respect to the magnetizations
+We note that \(F_{TAP}\) is an \textit{effective free energy} expressed in terms of the magnetizations \(\mathbf{m}^v, \mathbf{m}^h\), given by eq. \eqref{eq:act_vis},\eqref{eq:act_hid}. Its minimization gives a valid approximation to the free energy \(F\)
 
 \begin{equation}
 F \simeq F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h), \qquad \left. \frac{dF_{TAP}}{d \mathbf{m}} \right\rvert_{\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h} = 0
@@ -171,10 +171,17 @@ Summarizing, the training procedure based on TAP approximation is reported in th
 \end{algorithmic}
 \end{algorithm}
 
+We conclude by noting how the introduction of the inverse temperature \(\beta\) is just a formal passage; in the context of a RBM we keep \(\beta = 1\) and the high-temperature expansion is substituted by a weak-couplings expansion, under the assumption that the weights \(w_{ij}\) are small enough (this assumption is verified in next sections). The variance of the weights matrix can then serve as an \textit{effective inverse temperature}, giving
+
+\begin{equation}
+T_{eff} = \frac{1}{Var(\mathbf{W})}
+\label{eq:t_eff}
+\end{equation}
+
 \subsection{Analysis of the learning}
 To assess the performance of the extended mean-field (EMF) training described in section \ref{sec:emf} we have trained a RBM using both PCD and EMF and compared the outcomes, implementing both algorithms following the guidelines given in \cite{Hinton_guide}.
 
-The dataset we used is the MNIST database \cite{mnist}, a set of 70000 handwritten digits whose samples consist in \(28 \times 28\) pixels centered and size-normalized images. The first 60000 samples are used for training the RBM while the remaining 10000 samples constitute the test set, that is used to validate the training and monitoring for overfitting. Examples of the MNIST samples are shown in fig. \ref{fig:mnist}.
+The dataset we used is the MNIST database \cite{mnist}, a set of \(70000\) handwritten digits whose samples consist in \(28 \times 28\) pixels centered and size-normalized images. The first \(60000\) samples are used for training the RBM while the remaining \(10000\) samples constitute the test set, that is used to validate the training and monitoring for overfitting. Examples of the MNIST samples are shown in fig. \ref{fig:mnist}.
 
 Drawing samples from the trained distribution \(P(\mathbf{v},\mathbf{h})\) is done by performing Gibbs sampling \cite{gibbs}, which basically consists in running a Markov chain to convergence. In the context of a RBM, as there are no links among units in the same layer, we can perform the sampling in blocks: starting from a visible configuration the conditional probability of the hidden layer is computed using \eqref{eq:act_hid} and this makes it possible to compute the conditional probability of the visible layer, starting a loop that if iterated long enough is guaranteed to produce samples approximating the joint probability distribution of all the variables. The sampling algorithm is reported below for clarity.
 
@@ -189,6 +196,27 @@ Drawing samples from the trained distribution \(P(\mathbf{v},\mathbf{h})\) is do
 \State Set \(v_i = 1\) with probability \(P(v_i = 1|\mathbf{h})\)
 \end{algorithmic}
 \end{algorithm}
+
+The results of the training are affected by many parameters, that we have set empirically and in accordance to \cite{PCD}\cite{tap_train}. A summary for our choices is given below:
+
+\begin{itemize}
+  \item \(\sigma_v = 0.01\): this is the variance for the initialization of the weights \(\mathbf{W}\) as a gaussian random matrix. This value is agreed to work well and it fits our requirement of having small weights in order to perform the weak couplings expansion
+  \item \(\alpha = 0.01\): a larger learning rate would speed up the training but making the RBM initially learn a bad model of the data that is then difficult to refine during succeeding epochs. A small learning rate is then preferred to obtain a good generative model.
+  \item \(d = 784\): number of visible units, set in accordance to the dimensionality of MNIST images (\(28 \times 28\)).
+  \item \(p = 500\): number of hidden units, set in accordance to other works on the MNIST database. A too small number would not make it possible to accurately represent all the characteristics of the training data while a too big number would result in a redundant increase in the complexity of the model.
+  \item batch size \(m = 100\): training data are not processed one by one but in batches, so that the operations can be vectorized to speed up the learning. The higher the batch size, the more efficient the learning. Lower batch sizes, however, are found to give better generative models and in our case the chosen value is a good trade-off.
+  \item \( k = 15 \): number of Gibbs sampling steps used for PCD learning. For EMF, we recall that no Gibbs sampling steps are necessary during training.
+\end{itemize}
+
+The comparison between PCD and EMF is performed by looking at the weights distribution, the generated hidden features and the samples generated by the trained RBM.
+
+The weights distribution after training is shown in fig. \ref{fig:w_distr}. For both PCD and EMF the initial gaussian distribution is shrinked to a more peaked distribution around zero, showing the equivalence of the two methods from this point of view. In the EMF framework this legitimates the weak-couplings expansion and shows how the learning procedure determines an increase in the effective temperature \eqref{eq:t_eff}. In fig. \ref{fig:features}, instead, the hidden features generated by the RBM are shown. Each consists in the activation pattern of the visible layer driven by a single hidden unit, whose ensemble corresponds to the strokes by which the samples generated by the RBM are composed \cite{monasson}. [comment].
+
+The most significant comparison between the two methods is given by looking at the samples generated by the trained models, shown in fig. \ref{fig:samples}. Both methods generate good models of the training data, but we can see that for EMF some samples are not resembling real digits. This is not surprising if we take into account the fact that the TAP free energy \eqref{f_tap} employed in EMF encodes also the metastable states of the corresponding physical system.
+
+As a conclusion, we see that PCD and EMF training give comparable results, apart from the spurious states generated by EMF. The strength of EMF, however, is the ability to provide a theoretical framework that can be helpful in trying to understand what is going on during the learning. A careful analysis of the RBM from the point of view of statistical physics should be able to provide useful insights on its functioning and provide a solution to the problems of EMF. Some work has been done in this direction.
+
+% A quantitative criterium of caomparison is given by looking at the pseudo-likelihood for PCD \cite{Hinton_guide} and the EMF-likelihood for EMF \cite{tap_train}, fig. \ref{fig:likelihood}. The two objective functions are different and a direct caomparison of their values is not clearly meaningful, even if the similarity is striking. 
 
 \section{Singular Values Decomposition of a RBM}
 The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
