@@ -278,7 +278,9 @@ as reported in \cite{Hinton_guide}. To understand how the structure of the data 
 
 \subsection{Informal introduction to Singular Value Decomposition (SVD) and Principal Component Analysis (PCA)}
 
-The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a \(n \times p\) data matrix \(\mathbf{X}\) where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define the related covariance matrice (square and symmetric)
+The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a data matrix \(\mathbf{X}\) of dimension \(n \times p\) with \(n > p\), where \(n\) is the number of samples and \(p\) is the dimension of each sample, and further assuming that samples are centered (i.e. column means have been subtracted, as data are arranged by rows), we can define an unbiased estimator for the related covariance matrice (square and symmetric)
+
+ %Given a \(n \times p\) data matrix \(\mathbf{X}\) where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define an unbiased estimator for the related covariance matrice (square and symmetric)
 
 \begin{equation}
 \mathbf{C} = \frac{\mathbf{X}^T \mathbf{X}}{n-1}
@@ -464,37 +466,53 @@ Before focusing on the left singular vectors, we note that also the external vis
     \label{fig:vbias}
   \end{subfigure}
   \begin{subfigure}{.15\linewidth}
-    \includegraphics[width=\linewidth]{X_l_eigv_1.eps}
+    \includegraphics[width=\linewidth]{X_l_eigv_1.png}
     \caption{}
     \label{fig:m1data}
   \end{subfigure}\par\medskip
   \begin{subfigure}{\linewidth}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_2.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_3.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_4.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_5.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_6.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_7.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_8.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_9.eps}
-    \includegraphics[width=.05\linewidth]{W_l_eigv_10.eps}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_2.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_3.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_4.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_5.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_6.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_7.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_8.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_9.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_10.png}
+    \includegraphics[width=.05\linewidth]{X_l_eigv_11.png}
+    \caption{}
+    \label{fig:modes_data}
+  \end{subfigure}
+  \begin{subfigure}{\linewidth}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_1.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_2.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_3.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_4.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_5.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_6.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_7.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_8.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_9.png}
+    \includegraphics[width=.05\linewidth]{W_l_eigv_10.png}
     \caption{}
     \label{fig:modes_tr}
   \end{subfigure}\par
   \begin{subfigure}{\linewidth}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_2.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_3.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_4.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_5.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_6.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_7.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_8.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_9.eps}
-    \includegraphics[width=.05\linewidth]{X_l_eigv_10.eps}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_1.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_2.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_3.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_4.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_5.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_6.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_7.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_8.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_9.png}
+    \includegraphics[width=.05\linewidth]{W_10_l_eigv_10.png}
     \caption{}
-    \label{fig:modes_data}
+    \label{fig:modes_tr_10}
   \end{subfigure}
- \caption{\textbf{(a)} First mode learnt by the RBM with the external visible field initialized as a null vector. \textbf{(b)} External visible field initialized with rule \eqref{eq:bias_init}. \textbf{(c)} First principal components extracted from the training set. \textbf{(d)} The first 9 modes of a trained RBM when rule \eqref{eq:bias_init}  has been used. \textbf{(e)} Principal components extracted from the training set (starting from the second).}
+   \caption{\textbf{(a)} First mode learnt by the RBM with the external visible field initialized as a null vector. \textbf{(b)} External visible field initialized with rule \eqref{eq:bias_init}. \textbf{(c)} First principal components extracted from the training set. \textbf{(d)} Principal components extracted from the training set (starting from the second). \textbf{(e)} The first 10 modes of a trained RBM when rule \eqref{eq:bias_init}  has been used - 1 epoch.}
 \end{figure}
 
 The first 10 left singular vectors of a trained RBM are shown in fig. \ref{fig:modes_tr}. They are all composed by a homogeneous background on the borders and a set of alternating dark and light traits in the center, highlighting the fact that each singular vector acts globally on the visible layer. Even if the pictures seen in fig. \ref{fig:modes_tr} are quite different one from another, an interesting trend is found: a higher number of alternating traits is present in the successive vectors. At this point it is useful to draw a comparison to the Fourier decomposition of an image and interpret the left singular values as the \textit{modes} composing the activation pattern. The first singular vectors, characterized by a small number of alternating traits, play the role of the \textit{low frequency} modes while the successive modes act as \textit{high frequency} modes. The analogy to Fourier modes is suggested by the fact that we are basically performing Principal Component Analysis (PCA) over the matrix \textbf{W} and the left singular vectors can thus be identified with the principal modes of variation.
@@ -503,11 +521,14 @@ Looking at the dynamics of the learning it is seen that the modes take shape one
 
 These observations suggest that the RBM is able to learn the modes that compose the activation patterns of the data, starting with the low frequency modes and proceeding with the high frequency ones. Moreover, with reference to the \(\sigma_j\) distribution (fig. \ref{fig:sv4}), we note that the low frequency modes are given a higher weigth.
 
+The dynamics described here and in the previous section present some similarities to the learning dynamics for deep linear neural networks \cite{ganguli}. Some insights on the behaviour of a RBM in the linear regime were given by looking at the SVD-like equations \eqref{eq:svd-like}, where we have seen how the magnetizations aligned to the strongest SVD modes are amplified. These magnetizations are thus unstable and they drive the formation of new mean-field fixed points during learning, that correspond to the magnetizations affine to the samples in the training set. These observations suggest a connection between the SVD of the data in the training set and the SVD of the weights matrix \(\mathbf{W}\), at least in the linear regime. This hypothesis is confirmed by comparing the SVD modes extracted from the data and those of the \(\mathbf{W}\) matrix, fig. \ref{fig:modes_lin}-\ref{eq:modes_data}, that are very similar. Going on with the training we expect non-linear effects to kick-in and this is seen in fig. \ref{fig:modes_tr} where the SVD of the data is not comparable to the SVD of \(\mathbf{W}\) anymore.
+
 Summarizing, the analysis of the left singular vectors gives many insights on the training procedure:
 
 \begin{itemize}
 \item a RBM is able to learn the modes that compose the activation patterns of the training data
 \item the low frequency modes are learnt first and are given higher weigths
+\item at the beginning of the training the RBM operates in the linear regime and the \(\mathbf{W}\) matrix is shaped according to the SVD of the data in the training set
 \item by continuing the training, new modes at increasing higher frequency are learnt while the already learnt modes are strengthen
 \item the external visible field is equivalent to a left singular vector but we can avoid to learn it by using the appropriate initial conditions
 \end{itemize}
