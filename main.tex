@@ -29,6 +29,15 @@
 \maketitle
 
 \section{Introduction}
+In the last years progresses in machine learning have led to spectacular applications in many fields such as computer vision, image classification, speech recognition... \cite{}\cite{}, giving results that were believed to be decades away \cite{}. While the practical applications are of tangible impact, however, our theoretical understanding of the models in use is poor. From this point of view, unsupervised learning presents more fundamental challenges then supervised learning \cite{foundations}, the former being the problem of automatically extracting structure from data while the latter refers to the ability to learn a rule that maps data to their appropriate labels. What we are interested in is the matter of automatically constructing generative models from a dataset, a problem which arises in the context of unsupervised learning.
+
+While generative models in use can be arbitrarily complex, not even the most elementary models such as Restricted Boltzmann Machines (RBM), a simple neural network with only one hidden layer, are well understood. Historically, the theoretical foundations of neural networks have been grounded in statistical physics \cite{}\cite{}\cite{} and in this work we show the effectiveness of this approach applied to the RBM model.
+
+After a brief overview on the RBM model, we present a recently proposed training algorithm based on statistical physics \cite{tap_train}. A comparison to classical Monte Carlo based algorithms is then given, showing the substantial equivalence of the methods. This preliminary analysis paves the ground for a careful examination of the dynamics of learning, which are found to be independent on the specific training procedure used. The RBM is then studied in the linear regime, where mean-field theory from statistical physics helps in identifying the Singular Value Decomposition (SVD) of the RBM parameters as the SVD of the training data.
+ %finding a relation between the singular value decomposition (SVD) of the training data and the SVD of the RBM parameters.
+On this basis, the analysis of the dynamical evolution of the SVD of the RBM parameters produces a detailed picture of how the structure of the training data is embedded into the model. This increases our understanding of the learning process and gives some clear insights to understand when the learning has come to an end, improving on current criteria based on flatness of a likelihood function and subjective quality of generated samples.
+
+Finally, the SVD analysis let us differentiate the trained RBM parameters in a set of random parameters that represent noise and can be discarded and a set of structured non-random parameters. This is a first advance in an attempt to determine the proper statistical ensemble of the RBM model, in order to improve current theoretical treatments which are based on completely random approximation \cite{monasson}.
 
 \section{Training Restricted Boltzmann Machines} \label{training}
 
