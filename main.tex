@@ -29,21 +29,21 @@
 \maketitle
 
 \section{Introduction}
-In the last years progresses in machine learning have led to spectacular applications in many fields such as computer vision, image classification, speech recognition... \cite{}\cite{}, giving results that were believed to be decades away \cite{}. While the practical applications are of tangible impact, however, our theoretical understanding of the models in use is poor. From this point of view, unsupervised learning presents more fundamental challenges then supervised learning \cite{foundations}, the former being the problem of automatically extracting structure from data while the latter refers to the ability to learn a rule that maps data to their appropriate labels. What we are interested in is the matter of automatically constructing generative models from a dataset, a problem which arises in the context of unsupervised learning.
+In the last years progresses in machine learning have led to spectacular applications in many fields such as computer vision, image classification, speech recognition... \cite{}\cite{}, giving results that were believed to be decades away \cite{}. While the practical applications are of tangible impact, however, our theoretical understanding of the models in use is poor. From this point of view, unsupervised learning presents specific challenges different from those of supervised learning \cite{foundations}, the former being the problem of automatically extracting structure from data while the latter refers to the ability to learn a rule that maps data to their appropriate labels. What we are interested in is the matter of automatically constructing generative models from a dataset, a problem which arises in the context of unsupervised learning.
 
 While generative models in use can be arbitrarily complex, not even the most elementary models such as Restricted Boltzmann Machines (RBM), a simple neural network with only one hidden layer, are well understood. Historically, the theoretical foundations of neural networks have been grounded in statistical physics \cite{}\cite{}\cite{} and in this work we show the effectiveness of this approach applied to the RBM model.
 
-After a brief overview on the RBM model, we present a recently proposed training algorithm based on statistical physics \cite{tap_train}. A comparison to classical Monte Carlo based algorithms is then given, showing the substantial equivalence of the methods. This preliminary analysis paves the ground for a careful examination of the dynamics of learning, which are found to be independent on the specific training procedure used. The RBM is then studied in the linear regime, where mean-field theory from statistical physics helps in identifying the Singular Value Decomposition (SVD) of the RBM parameters as the SVD of the training data.
+After a brief overview on the RBM model, we present a recently proposed training algorithm based on statistical physics \cite{tap_train}\cite{}. A comparison to classical Monte Carlo based algorithms is then given, showing the substantial equivalence of the methods. This preliminary analysis paves the ground for a careful examination of the dynamics of learning, which are found to be independent on the specific training procedure used. The RBM is then studied in the linear regime, where mean-field theory from statistical physics helps in identifying the Singular Value Decomposition (SVD) of the RBM parameters as the SVD of the training data.
  %finding a relation between the singular value decomposition (SVD) of the training data and the SVD of the RBM parameters.
 On this basis, the analysis of the dynamical evolution of the SVD of the RBM parameters produces a detailed picture of how the structure of the training data is embedded into the model. This increases our understanding of the learning process and gives some clear insights to understand when the learning has come to an end, improving on current criteria based on flatness of a likelihood function and subjective quality of generated samples.
 
-Finally, the SVD analysis let us differentiate the trained RBM parameters in a set of random parameters that represent noise and can be discarded and a set of structured non-random parameters. This is a first advance in an attempt to determine the proper statistical ensemble of the RBM model, in order to improve current theoretical treatments which are based on completely random approximation \cite{monasson}.
+Finally, the SVD analysis let us differentiate the trained RBM parameters in a set of random parameters that represent noise and can be discarded and a set of structured non-random parameters. This is a first advance in an attempt to determine the proper statistical ensemble of the RBM model, in order to improve current theoretical treatments which are based on the approximation that parameters are random and independent \cite{monasson}.
 
 \section{Training Restricted Boltzmann Machines} \label{training}
 
 \subsection{Definition of the model}
 
-A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_i\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
+A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_j\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
 
 \begin{equation}
 E(\textbf{h},\textbf{v}) = - \sum_i a_i v_i - \sum_j b_j h_j - \sum_{i,j} v_i w_{ij} h_j
@@ -56,7 +56,7 @@ where \(a_i\) and \(b_i\) are \textit{external fields} acting respectively on th
 P(\textbf{h},\textbf{v}) = \frac{e^{-E(\textbf{h},\textbf{v})}}{Z}
 \end{equation}
 
-where \( \textstyle Z = \sum_{\textbf{h},\textbf{v}} e^{-E(\textbf{h},\textbf{v})}\) is the \textit{partition function}. The probabilities of activations for visible and hidden units can be simply computed to be
+where \( \textstyle Z = \sum_{\textbf{h},\textbf{v}} e^{-E(\textbf{h},\textbf{v})}\) is the \textit{partition function}. The probabilities of activations for visible and hidden units can be simply computed to be (given the independence of units in the same layer)
 
 \begin{align}
 P(v_i = 1 | \textbf{h}) &  = \frac{1}{1+e^{-a_i - \sum_{j} w_{ij} h_j}} \nonumber \\
@@ -77,7 +77,7 @@ P(h_j = 1 | \textbf{v}) & = \frac{1}{1+e^{b_j + \sum_i w_{ij} v_i}} \nonumber \\
   \label{fig:rbm}
 \end{figure}
 
-We see that the usual neuron activation function (the sigmoid function, which we indicated by \(sigm\)) comes out naturally by choosing binary units. Moreover, we can now understand the importance of the external fields: they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
+We see that the usual neuron activation function (the sigmoid function, which we indicated by \(sigm\)) comes out naturally by choosing binary units \(h_j,v_i = 0,1\). Moreover, we can now understand the importance of the external fields: they drive the activation of a certain unit by setting a threshold that has to be overcome by the opposite layer through the couplings \(w_{ij}\).
 
 What we are interested in is the probability for the visible units, which is the layer we use to represent data. It can be easily defined as
 
@@ -97,7 +97,7 @@ F_c(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonum
 To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) for the samples belonging to the training set. This is done by performing gradient ascent over the log-likelihood \(\log P(\textbf{v})\), whose derivative with respect to the weights can be computed to be
 
 \begin{equation}
-\frac{\partial \log P(\textbf{v})}{\partial w_{i,j}} = \langle h_i v_j \rangle_{data} - \langle h_i v_j \rangle_{model}
+\frac{\partial \log P(\textbf{v})}{\partial w_{i,j}} = \langle v_i P(h_j = 1 | \mathbf{v}) \rangle_{data} - \langle v_i h_j \rangle_{model}
 \label{eq:opt}
 \end{equation}
 
@@ -180,7 +180,7 @@ Summarizing, the training procedure based on TAP approximation is reported in th
 \end{algorithmic}
 \end{algorithm}
 
-We conclude by noting how the introduction of the inverse temperature \(\beta\) is just a formal passage; in the context of a RBM we keep \(\beta = 1\) and the high-temperature expansion is substituted by a weak-couplings expansion, under the assumption that the weights \(w_{ij}\) are small enough (this assumption is verified in next sections). The variance of the weights matrix can then serve as an \textit{effective inverse temperature}, giving
+We conclude by noting how the introduction of the inverse temperature \(\beta\) is just a formal passage; in the context of a RBM we keep \(\beta = 1\) and the high-temperature expansion is substituted by a weak-couplings expansion, under the assumption that the weights \(w_{ij}\) are small enough (this assumption is verified in next sections). The variance of the weights matrix can then serve as an \textit{effective inverse temperature} \cite{monasson}, giving
 
 \begin{equation}
 T_{eff} = \frac{1}{Var(\mathbf{W})}
@@ -269,7 +269,7 @@ The comparison between PCD and EMF is performed by looking at the weights distri
 
 The weights distribution after training is shown in fig. \ref{fig:w_pcd5_50}-\ref{fig:w_tap20_50}. For both PCD and EMF the initial gaussian distribution is shrinked to a more peaked distribution around zero, but the tails of the distribution get fatter. This results in an increase in the variance of \(\mathbf{W}\) and a corresponding decrease in the effective temperature \eqref{eq:t_eff}, suggesting that the weak couplings expansion is not justified anymore in late phases of the training. This, in turn, indicates how the EMF training could eventually break down after a long enough training, while PCD is not affected by this problem. However, the effective temperature does not decrease indefinitely; after a small but substantial number of epochs (circa \(20\) in our case) it converges to a low value.
 
-In fig. \ref{fig:features_pcd}-\ref{fig:features_tap}, instead, the hidden features generated by the RBM are shown. Each consists in the activation pattern of the visible layer driven by a single hidden unit, and their ensemble corresponds to the strokes by which the samples generated by the RBM are composed \cite{monasson}. Basically no difference is found among PCD and EMF features, and this serves as a first hint that the charachterization of a trained RBM is independent from the training procedure. 
+In fig. \ref{fig:features_pcd}-\ref{fig:features_tap}, instead, the hidden features generated by the RBM are shown. Each consists in the activation pattern of the visible layer driven by a single hidden unit, and their ensemble corresponds to the strokes by which the samples generated by the RBM are composed \cite{monasson}. No qualitative difference is found among PCD and EMF features, and this serves as a first hint that the charachterization of a trained RBM is independent from the training procedure. 
 
 The most significant comparison between the two methods is given by looking at the samples generated by the trained models, shown in fig. \ref{fig:samples_pcd}-\ref{fig:samples_tap}. Both methods generate good models of the training data, but we can see that for EMF some samples are not resembling real digits. This is an artifact of the learning which is found also for PCD, even if it is more evident for EMF; an investigation on the matter is given in \cite{clement}.
 
@@ -278,7 +278,7 @@ As a conclusion, we see that PCD and EMF training give comparable results, apart
 % A quantitative criterium of caomparison is given by looking at the pseudo-likelihood for PCD \cite{Hinton_guide} and the EMF-likelihood for EMF \cite{tap_train}, fig. \ref{fig:likelihood}. The two objective functions are different and a direct caomparison of their values is not clearly meaningful, even if the similarity is striking. 
 
 \section{Singular Values Decomposition of a RBM}
-The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the set of quantities which constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
+The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the parameters that constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
 
 \begin{equation}
 a_i = \log[p_i/(1-p_i)]
@@ -328,7 +328,7 @@ Plugging the SVD of \(\mathbf{X}\) into the definition of covariance matrix
 we see how the \textit{right singular vectors} can be identified as the \textit{principal directions} and a relation between the singular values \(\sigma_j\) and the eigenvalues of the covariance matrice \(\lambda_j\) is easily found
 
 \begin{equation}
-\lambda_j = \frac{\sigma_j}{n-1}
+\lambda_j = \frac{\sigma_j^2}{n-1}
 \label{eq:ls_map}
 \end{equation}
 
@@ -545,7 +545,7 @@ Summarizing, the analysis of the left singular vectors gives many insights on th
 \item the external visible field is equivalent to a left singular vector but we can avoid to learn it by using the appropriate initial conditions
 \end{itemize}
 
-\section{Role of the modes}
+\section{Charachterization of the modes}
 By looking at the singular values distribution of \(\mathbf{W}\) we have seen that there seem to be \textit{more} and \textit{less important} singular vectors. In the previous section we have then refined this observation by highlighting how the lowest-frequency modes are given the highest weights. We can then identify the more (less) important modes as the low (high) frequency ones. To gain some intuition about the meaning of this separation we can take our analogy further and think about the Fourier decomposition of a square wave; in such a case, the superposition of the low frequency harmonics is sufficient to build a good approximation of a square wave, while the role of the high frequency harmonics is that of sharpening the waveform at the discontinuity points. In the context of a trained RBM, we then expect that good approximations to the training data are obtained by exploiting only the low frequency modes, while the high frequency modes should represent minor corrections.
 
 \begin{figure}
