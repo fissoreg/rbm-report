@@ -19,8 +19,12 @@
 \begin{document}
 
 \title{Restricted Boltzmann Machines}
+
 \author{Giancarlo Fissore}
-\date{May 2017}
+\email{giancarlo.fissore@gmail.com}
+\affiliation{Laboratoire de Recherche en Informatique, TAO - INRIA, Universit\'e Paris-Sud, Bat. 660, 91190 Gif-sur-Yvette, France.}
+
+\date{28 June 2017}
 
 \begin{abstract}
 Restricted Boltzmann Machines (RBMs) are elementary generative models that have been shown to be effective on their own or as building blocks for deep architectures. Despite their relative simplicity, however, a deep theoretical understanding of their functioning is missing and we try to improve on this situation by analysing the learning dynamics of such model. First, we compare a new physics-inspired training algorithm to the classical persistent contrastive divergence method, finding that the classical strategy is slightly preferable. However, the minor differences that we observed do not impact the learning dynamics and leveraging the tools of statistical physics we show that a theoretical framework to study RBMs can be identified. In particular, mean-field methods are shown to provide a good characterization for the linear regime in which RBMs are found to operate at the beginning of the training. In this regime, it is shown that the parameters of the model are learnt in such a way to reproduce the singular value decomposition of the training data. Moreover, looking at the dynamical evolution of the model's parameters it is shown how the learning dynamics are initially fast and then slow down, and a cutoff in the parameters is found which we interpret as a signal to stop the learning. Finally, a basic statistical characterization of the parameters for a trained RBM is highlighted.
@@ -28,7 +32,7 @@ Restricted Boltzmann Machines (RBMs) are elementary generative models that have 
 
 \maketitle
 
-\section{Introduction}
+\section*{Introduction}
 In the last years progresses in machine learning have led to spectacular applications in many fields such as computer vision, image classification, speech recognition... \cite{}\cite{}, giving results that were believed to be decades away \cite{}. While the practical applications are of tangible impact, however, our theoretical understanding of the models in use is poor. From this point of view, unsupervised learning presents specific challenges different from those of supervised learning \cite{foundations}, the former being the problem of automatically extracting structure from data while the latter refers to the ability to learn a rule that maps data to their appropriate labels. What we are interested in is the matter of automatically constructing generative models from a dataset, a problem which arises in the context of unsupervised learning.
 
 While generative models in use can be arbitrarily complex, not even the most elementary models such as Restricted Boltzmann Machines (RBM), a simple neural network with only one hidden layer, are well understood. Historically, the theoretical foundations of neural networks have been grounded in statistical physics \cite{}\cite{}\cite{} and in this work we show the effectiveness of this approach applied to the RBM model.
@@ -601,6 +605,10 @@ Beyond the linear regime, the evolution of the singular values highlights a more
 The investigation presented in this report serves as a first step in the determination of the statistical properties of trained RBMs. The emerging picture is that parameters of the model are in part random (interpreted as noise) and in part structured and related to data. This is expressed in eq. \eqref{eq:params_exp}, where the set of outliers is the one of interest; determining the statistical properties of this subset of parameters (starting with mean and variance, to proceed by determining the form of the distribution) would lead to the association of a proper statistical ensemble to the RBM model, improving on current approximations based on unrealistic assumptions such as independence of the weights \cite{monasson}.
 
 Altogether, our analysis of the learning dynamics helped shading some lights on the inner workings of the RBM model, providing a useful framework in which subsequent investigations can more easily be performed.
+
+\begin{acknowledgements}
+Thanks to god.
+\end{acknowledgements}
 
 \input{bib.tex}
 
