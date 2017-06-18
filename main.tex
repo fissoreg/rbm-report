@@ -140,8 +140,8 @@ By means of a high-temperature expansion (\(\beta \to 0\)) \cite{ht_exp} it is t
 
 \begin{align}
 F_{TAP}(\mathbf{m}^v,\mathbf{m}^h) = &+ S(\mathbf{m}^v) + S(\mathbf{m}^h) \nonumber \\
-&- \sum_i a_i m_i^v - \sum_j b_j m_j^h - \sum_{i,j} w_{i,j} m_i^v m_j^h \nonumber \\
-&+ \sum_{i,j} \frac{w_{i,j}^2}{2} \left( m_i^v - {m_i^v}^2 \right) \left(m_j^v - {m_j^h}^2 \right) \label{eq:f_tap}
+&- \sum_i a_i m_i^v - \sum_j b_j m_j^h - \sum_{i,j} w_{ij} m_i^v m_j^h \nonumber \\
+&+ \sum_{i,j} \frac{w_{ij}^2}{2} \left( m_i^v - {m_i^v}^2 \right) \left(m_j^v - {m_j^h}^2 \right) \label{eq:f_tap}
 \end{align}
 
 with \( \textstyle S(\mathbf{m}) = - \sum_i \left[ m_i \log m_i + (1 - m_i) \log (1 - m_i) \right] \).
@@ -156,14 +156,14 @@ F \simeq F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h), \qquad \left. \fra
 To obtain \(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h\) it is then necessary to extremise \eqref{eq:f_tap} to obtain the following coupled equations
 
 \begin{align}
-m_i^v \simeq sigm \left\{ a_i + \sum_j \left[ w_{i,j} m_j^h - w_{i,j} \left( m_i^v - \frac{1}{2} \right) \left( m_j^h - {m_j^h}^2 \right) \right] \right\} \label{eq:tap_vis} \\
-m_j^h \simeq sigm \left\{ b_j + \sum_i \left[ w_{i,j} m_i^v - w_{i,j} \left( m_j^h - \frac{1}{2} \right) \left( m_i^v - {m_i^v}^2 \right) \right] \right\} \label{eq:tap_hid}
+m_i^v \simeq sigm \left\{ a_i + \sum_j \left[ w_{ij} m_j^h - w_{ij} \left( m_i^v - \frac{1}{2} \right) \left( m_j^h - {m_j^h}^2 \right) \right] \right\} \label{eq:tap_vis} \\
+m_j^h \simeq sigm \left\{ b_j + \sum_i \left[ w_{ij} m_i^v - w_{ij} \left( m_j^h - \frac{1}{2} \right) \left( m_i^v - {m_i^v}^2 \right) \right] \right\} \label{eq:tap_hid}
 \end{align}
 
 that can be solved by iteration \cite{conv}. Finally, given the approximation to the free energy \eqref{eq:f_approx}, the optimization problem over the log-likelihood \eqref{eq:opt} is greatly simplified: the average over the training samples \(\textstyle \langle \cdot \rangle_{data}\) is unchanged while the intractable average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is substituted by the maximization of \eqref{eq:f_approx}, giving
 
 \begin{equation}
-\Delta \mathbf{W} = \alpha \left( \langle \mathbf{v h}^T \rangle_{data} - \frac{\partial F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h)}{\partial w_{i,j}} \right)
+\Delta \mathbf{W} = \alpha \left( \langle \mathbf{v h}^T \rangle_{data} - \frac{\partial F_{TAP}(\mathbf{\tilde{m}}^v, \mathbf{\tilde{m}}^h)}{\partial w_{ij}} \right)
 \label{eq:w_up_tap}
 \end{equation}
 
@@ -358,18 +358,18 @@ m_j^h = sigm \left(b_j + \sum_i w_{ij} m^v_i - \sum_i w_{ij}\right)
 In section \ref{training} we have seen that the weights \(w_{ij}\) are initially small, and we can get rid of the external visible field by centering the training data. The external hidden field is instead initialized to zero and it varies slowly, so it doesn't have any effects at the beginning of the training. Thus, neglecting both the external fields we can linearize the mean-field equations to obtain (defining \( \tilde{m}_i^v = m_i^v - 1/2, \tilde{m}_j^h = m_j^h - 1/2 \) for convenience)
 
 \begin{equation}
-\tilde{m}_i^v \simeq \frac{1}{4} \sum_j w_{i,j} \tilde{m}_j^h
+\tilde{m}_i^v \simeq \frac{1}{4} \sum_j w_{ij} \tilde{m}_j^h
 \label{eq:mf_vis}
 \end{equation}
 
 \begin{equation}
-\tilde{m}_j^h \simeq \frac{1}{4} \sum_i w_{i,j} \tilde{m}_i^v
+\tilde{m}_j^h \simeq \frac{1}{4} \sum_i w_{ij} \tilde{m}_i^v
 \end{equation}
 
-We can now express the weights \(w_{i,j}\) in terms of the SVD as (\(u_{i,\alpha}\) identifies the \(i_{th}\) component of the \(\alpha_{th}\) columns of \(\mathbf{U}\), and analogous notation is used for \(\mathbf{V}\))
+We can now express the weights \(w_{ij}\) in terms of the SVD as (\(u_{i,\alpha}\) identifies the \(i_{th}\) component of the \(\alpha_{th}\) columns of \(\mathbf{U}\), and analogous notation is used for \(\mathbf{V}\))
 
 \begin{equation}
-w_{i,j} = \sum_{\alpha} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha}
+w_{ij} = \sum_{\alpha} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha}
 \label{eq:w_exp}
 \end{equation}
 
