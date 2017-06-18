@@ -35,7 +35,7 @@ Restricted Boltzmann Machines (RBMs) are elementary generative models that have 
 \section*{Introduction}
 In the last years progresses in machine learning have led to spectacular applications in many fields such as computer vision, image classification and speech recognition, giving results that were believed to be decades away \cite{go}. While the practical applications are of tangible impact, however, our theoretical understanding of the models in use is poor. From this point of view, unsupervised learning presents specific challenges different from those of supervised learning \cite{foundations}, the former being the problem of automatically extracting structure from data while the latter refers to the ability to learn a rule that maps data to their appropriate labels. What we are interested in is the matter of automatically constructing generative models from a dataset, a problem which arises in the context of unsupervised learning.
 
-While generative models in use can be arbitrarily complex, not even the most elementary models such as Restricted Boltzmann Machines (RBM), a simple neural network with only one hidden layer, are well understood. Historically, the theoretical foundations of neural networks have been grounded in statistical physics \cite{hist1}\cite{hist2} and in this work we show the effectiveness of this approach applied to the RBM model.
+While generative models in use can be arbitrarily complex, not even the most elementary models such as RBMs, a simple neural network with only one hidden layer, are well understood. Historically, the theoretical foundations of neural networks have been grounded in statistical physics \cite{hist1}\cite{hist2} and in this work we show the effectiveness of this approach applied to the RBM model.
 
 After a brief overview on the RBM model, we present a recently proposed training algorithm based on statistical physics \cite{tap_train}\cite{tap}. A comparison to classical Monte Carlo based algorithms is then given, showing the substantial equivalence of the methods. This preliminary analysis paves the ground for a careful examination of the dynamics of learning, which are found to be independent on the specific training procedure used. The RBM is then studied in the linear regime, where mean-field theory from statistical physics helps in identifying the Singular Value Decomposition (SVD) of the RBM parameters as the SVD of the training data.
  %finding a relation between the singular value decomposition (SVD) of the training data and the SVD of the RBM parameters.
@@ -47,7 +47,7 @@ Finally, the SVD analysis let us differentiate the trained RBM parameters in a s
 
 \subsection{Definition of the model}
 
-A Restricted Boltzmann Machine (RBM) is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_j\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
+A RBM is a model for neural networks which basically consists in a bipartite graph with a layer of hidden units \(h_j\) and a layer of visible units \(v_i\). The units in one layer are not connected among them but are connected to all the units in the other layer, as shown in fig. \ref{fig:rbm}. We restrict our treatment to the case of binary units \(h_i,v_i = 0,1\). Drawing a comparison between RBMs and spin models in statistical physics, we can define the following \textit{energy function}
 
 \begin{equation}
 E(\textbf{h},\textbf{v}) = - \sum_i a_i v_i - \sum_j b_j h_j - \sum_{i,j} v_i w_{ij} h_j
@@ -101,7 +101,7 @@ F_c(\textbf{v}) & = -\log \sum_{\textbf{h}} e^{-E(\textbf{h},\textbf{v})} \nonum
 To use the RBM as a generative model, we want to maximize \(P(\textbf{v}\)) for the samples belonging to the training set. This is done by performing gradient ascent over the log-likelihood \(\log P(\textbf{v})\), whose derivative with respect to the weights can be computed to be
 
 \begin{equation}
-\frac{\partial \log P(\textbf{v})}{\partial w_{i,j}} = \langle v_i P(h_j = 1 | \mathbf{v}) \rangle_{data} - \langle v_i h_j \rangle_{model}
+\frac{\partial \log P(\textbf{v})}{\partial w_{ij}} = \langle v_i P(h_j = 1 | \mathbf{v}) \rangle_{data} - \langle v_i h_j \rangle_{model}
 \label{eq:opt}
 \end{equation}
 
@@ -281,7 +281,7 @@ As a conclusion, we see that PCD and EMF training give comparable results, apart
 
 % A quantitative criterium of caomparison is given by looking at the pseudo-likelihood for PCD \cite{Hinton_guide} and the EMF-likelihood for EMF \cite{tap_train}, fig. \ref{fig:likelihood}. The two objective functions are different and a direct caomparison of their values is not clearly meaningful, even if the similarity is striking. 
 
-\section{Singular Values Decomposition of a RBM}
+\section{Singular Value Decomposition of a RBM}
 The structure of the samples that a RBM  is able to generate must be in some way encoded into the external fields \(\mathbf{a},\mathbf{b}\) and the weights matrix \(\mathbf{W}\), as these are the parameters that constitute the RBM itself. For what concerns the visible field values \(a_i\), these are used to make sure that the visible unit \(i\) is activated with a probability \(p_i\) given by the proportion of training samples in which unit \(i\) is active (i.e. where its value is 1). No learning is needed to make the field \(\mathbf{a}\) encode this information, it is sufficient to use the initialization rule
 
 \begin{equation}
@@ -289,11 +289,11 @@ a_i = \log[p_i/(1-p_i)]
 \label{eq:bias_init}
 \end{equation}
 
-as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the singular value decomposition (SVD) of \(\mathbf{W}\) during the training.
+as reported in \cite{Hinton_guide}. To understand how the structure of the data is encoded into the weights matrix, instead, we monitored the SVD of \(\mathbf{W}\) during the training.
 
 \subsection{Informal introduction to Singular Value Decomposition (SVD) and Principal Component Analysis (PCA)} \label{sec:svd_pca}
 
-The Principal Component Analysis (PCA) technique can be introduced by considering the covariance matrix of a dataset. Given a data matrix \(\mathbf{X}\) of dimension \(n \times p\) with \(n > p\), where \(n\) is the number of samples and \(p\) is the dimension of each sample, and further assuming that samples are centered (i.e. column means have been subtracted, as data are arranged by rows), we can define an unbiased estimator for the related covariance matrice (square and symmetric)
+The PCA technique can be introduced by considering the covariance matrix of a dataset. Given a data matrix \(\mathbf{X}\) of dimension \(n \times p\) with \(n > p\), where \(n\) is the number of samples and \(p\) is the dimension of each sample, and further assuming that samples are centered (i.e. column means have been subtracted, as data are arranged by rows), we can define an unbiased estimator for the related covariance matrice (square and symmetric)
 
  %Given a \(n \times p\) data matrix \(\mathbf{X}\) where the samples are arranged by rows and centered (i.e. column means have been subtracted), we can define an unbiased estimator for the related covariance matrice (square and symmetric)
 
@@ -309,7 +309,7 @@ that can be diagonalized
 
 where the columns of \(\mathbf{V}\) are eigenvectors of \(\mathbf{C}\) and \(\mathbf{L}\) is the diagonal matrix of the eigenvalues \(\lambda_i\). Projecting the samples over the eigenvectors of the covariance matrix (also called \textit{principal directions} in the context of PCA) we obtain the \textit{principal components}: new, independent variables that account for the maximum possible variability in the data. More precisely, the first \textit{principal component} maximizes the variance of the projections of the data (i.e. it has the highest possible variance) and the succeeding components maximize the variance while satisfying the constraints of being orthogonal to the preceeding components. A rigorous demonstration of the properties of \textit{principal components} is given in [].
 
-The Singular Value Decomposition (SVD) is the generalization of eigenmodes decomposition to rectangular matrices, and it is given by
+The SVD is the generalization of eigenmodes decomposition to rectangular matrices, and it is given by
 
 \begin{equation}
 \mathbf{X} = \mathbf{U \Sigma} \mathbf{V}^T
@@ -539,7 +539,7 @@ Looking at the dynamics of the learning it is seen that the modes take shape one
 
 These observations suggest that the RBM is able to learn the modes that compose the activation patterns of the data, starting with the low frequency modes and proceeding with the high frequency ones. Moreover, with reference to the \(\sigma_j\) distribution (fig. \ref{fig:sv4}), we note that the low frequency modes are given a higher weigth.
 
-The dynamics described here and in the previous section present some similarities to the learning dynamics for deep linear neural networks \cite{ganguli}. Some insights on the behaviour of a RBM in the linear regime were given by looking at the SVD-like equations \eqref{eq:svd_like_vis}-\eqref{eq:svd_like_hid}, where we have seen how the magnetizations aligned to the strongest SVD modes are amplified. These magnetizations are thus unstable and they drive the formation of new mean-field fixed points during learning, that correspond to the magnetizations affine to the samples in the training set. These observations suggest a connection between the SVD of the data in the training set and the SVD of the weights matrix \(\mathbf{W}\), at least in the linear regime. This hypothesis is confirmed by comparing the SVD modes extracted from the data and those of the \(\mathbf{W}\) matrix, fig. \ref{eq:modes_data}-\ref{fig:modes_tr}, that are very similar. Going on with the training we expect non-linear effects to kick-in and this is seen in fig. \ref{fig:modes_tr_10} where the SVD of the data is not comparable to the SVD of \(\mathbf{W}\) anymore.
+The dynamics described here and in the previous section present some similarities to the learning dynamics for deep linear neural networks \cite{ganguli}. Some insights on the behaviour of a RBM in the linear regime were given by looking at the SVD-like equations \eqref{eq:svd_like_vis}-\eqref{eq:svd_like_hid}, where we have seen how the magnetizations aligned to the strongest SVD modes are amplified. These magnetizations are thus unstable and they drive the formation of new mean-field fixed points during learning, that correspond to the magnetizations affine to the samples in the training set. These observations suggest a connection between the SVD of the data in the training set and the SVD of the weights matrix \(\mathbf{W}\), at least in the linear regime. This hypothesis is confirmed by comparing the SVD modes extracted from the data and those of the \(\mathbf{W}\) matrix, fig. \ref{fig:modes_data}-\ref{fig:modes_tr}, that are very similar. Going on with the training we expect non-linear effects to kick-in and this is seen in fig. \ref{fig:modes_tr_10} where the SVD of the data is not comparable to the SVD of \(\mathbf{W}\) anymore.
 
 Summarizing, the analysis of the left singular vectors gives many insights on the training procedure:
 
@@ -564,8 +564,6 @@ It is not clear, however, how we can discern between high and low frequency mode
 
 We are then driven to define the more important low frequency modes as the modes before cutoff, and the exponentially less important high frequency modes as those after cutoff. A consistency check is shown in fig. \ref{fig:hf_modes}, where just the 100 strongest modes are retained to construct the samples and the remaining modes are shown to encode boundary corrections. Choosing the first 100 modes is arbitrary; in fig. \ref{fig:sv_pl} we can see how the cutoff is well below 100, so with this choice we are sure that we included in the reconstruction of the samples all the strong modes before cutoff plus a small number of modes giving boundary corrections.
 
-[add plots and comments on stopping criteria]
-
 As a conclusion, the above observations suggest that the weights matrix of a trained RBM is composed by two classes of modes; recalling the expansion \eqref{eq:w_exp} we can express the components of \(\mathbf{W}\) as
 
 \begin{equation}
@@ -573,7 +571,7 @@ w_{ij} = \sum_{\alpha \in bulk} \sigma_{\alpha} u_{i,\alpha} v_{j,\alpha} + \sum
 \label{eq:params_exp}
 \end{equation}
 
-where the modes of the bulk are those that remain random after the training (below threshold or after cutoff) while the outliers correspond to the modes that actually encode the structure of training data. The proposed form for \(\mathbf{W}\) suggests that the statistical properties of the outliers are those important for determining the proper statistical ensemble of the RBM model; this could make it possible to theoretically analyse realistic RBM neural networks with the tools of statistical physics, improving current attempts relying on unrealistic random approximations \cite{monasson}.
+where the modes of the bulk are those that remain random after the training (below threshold or after cutoff) while the outliers correspond to the modes that actually encode the structure of training data. The proposed form for \(\mathbf{W}\) suggests that the statistical properties of the outliers are those important for determining the proper statistical ensemble of the RBM model; this could make it possible to theoretically analyse realistic RBM neural networks with the tools of statistical physics, improving current attempts relying on unrealistic approximations \cite{monasson}.
 
 \begin{figure}
   \begin{subfigure}{\linewidth}
@@ -599,7 +597,7 @@ where the modes of the bulk are those that remain random after the training (bel
 
 The analisys of the learning dynamics of a RBM led to a better understanding of how this elementary generative model is working, and how the structure of training data is dinamically learnt. 
 
-The first step in our work has been to compare the new physics-inspired EMF training algorithm to the PCD algorithm classically used to train RBMs. Inspection of the samples generated by the model has shown how the PCD method is slightly preferable, even if no qualitative difference between the two algorithms is found elsewhere. This is probably related to the fact that the training has been observed to increase the inverse effective temperature of the RBM, which is defined as the variance of the weights distribution. The weak couplings expansion on which EMF relies is then justified at the beginning of the training, but it breaks down after a small number of training epochs (less then \(20\) in our case, as we have seen the effective temperature to converge to a stable value after about \(20\) epochs). For all the other aspects of our investigation, however, no difference is found between PCD and EMF, showing how the learning dynamics are instrinsically related to the definition of the RBM model itself and independent on the training procedure.
+The first step in our work has been to compare the new physics-inspired EMF training algorithm to the PCD algorithm classically used to train RBMs. Inspection of the samples generated by the model has shown how the PCD method is slightly preferable; this is probably related to the fact that the training has been observed to increase the inverse effective temperature of the RBM, which is defined as the variance of the weights distribution. The weak couplings expansion on which EMF relies is then justified at the beginning of the training, but it breaks down after a small number of training epochs (less then \(20\) in our case, as we have seen the effective temperature to converge to a stable value after about \(20\) epochs). For all the other aspects of our investigation, however, no difference is found between PCD and EMF, showing how the learning dynamics are instrinsically related to the definition of the RBM model itself and independent on the training procedure.
 
 The behaviour of the inverse temperature also suggests that the training of a RBM is initially operated in the linear regime. In this learning phase, the mean-field approximation borrowed from statistical physics has proved to be a valuable investigation tool. In fact, linearization of mean-field equations provided the new SVD-like equations \eqref{eq:svd_like_vis}-\eqref{eq:svd_like_hid} that show how the SVD of the weights matrix \(\mathbf{W}\) is linked to the SVD of the training data. This link has been proven experimentally by tracking the evolution of the left singular vectors of the \(\mathbf{W}\) matrix, interpreted as the modes composing the generated models. Those have been found to approximate very well the corresponding principal components of the training data during the first epochs of the training, while for later epochs non-linear effects kick in and the similarity is lost.
 
