@@ -115,8 +115,12 @@ where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical dis
 
 In the same way we can get the update rules for the external fields
 
-\begin{align}
-\Delta \mathbf{a} &= \alpha \left( \mathbf{v}_{data} - \mathbf{v}_{model} \right) \\
+\begin{equation}
+\lable{eq:a_up}
+\Delta \mathbf{a} &= \alpha \left( \mathbf{v}_{data} - \mathbf{v}_{model} \right)
+\end{equation}
+\begin{equation}
+\label{eq:b_up}
 \Delta \mathbf{b} &= \alpha \left( \mathbf{h}_{data} - \mathbf{h}_{model} \right)
 \end{align}
 
@@ -612,5 +616,97 @@ This work has been done under the supervision of C. Furtlehner and A. Decelle. F
 \end{acknowledgements}
 
 \input{bib.tex}
+
+\appendix*
+
+\section{Learning dynamics in the linear regime}
+A more detailed description of the relation between the SVD of the data and that of the weights matrix can be given. To do that, we define a deterministic dynamics for the learning equations \eqref{eq:w_up}, \eqref{eq:a_up}, \eqref{eq:b_up} and show how at equilibrium they drive the learning of the strongest SVD modes of the data. Introducing a time variable \(t\) we rewrite \eqref{eq:w_exp} as
+
+\begin{equation}
+\label{eq:w_t}
+w_{ij}(t) = \sum_{\alpha} \sigma_{\alpha}(t) \mu_{i,\alpha}(t) \nu_{j,\alpha}(t)
+\end{equation}
+
+and we take the continuous limit of the learning equations to obtain
+
+\begin{align}
+\label{eq:cont1}
+\frac{dw_{ij}}{dt} & = \langle v_i h_j \rangle_{data} - \langle v_i h_j \rangle_{model} \\
+\label{eq:cont2}
+\frac{d a_i}{dt} & = \langle v_i \rangle_{data} - \langle v_i \rangle_{model} \\
+\label{eq:cont3}
+\frac{d b_j}{dt} & = \langle h_j \rangle_{data} - \langle h_j \rangle_{model}
+\end{align}
+
+The l.h.s. of \eqref{eq:cont1} can be expressed in a simple form by expanding it over the basis defined by the SVD and exploiting \eqref{eq:w_t}
+
+\begin{align}
+\label{eq:w_svd_exp}
+\left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta} & = \sum_{ij} \mathbf{\mu}_{i,\alpha} \frac{d w_{ij}}{dt} \mathbf{\nu}_{j,\beta} \nonumber \\
+& = \delta_{\alpha, \beta} \frac{d \sigma_{\alpha}}{dt} + (1 - \delta_{\alpha \beta} ) \left( \sigma_{\alpha} \frac{d \mathbf{\nu}_{\alpha}^T}{dt} \mathfb{\nu}_{\beta} + \sigma_{\beta} \mathbf{\mu}_{\alpha}^T \frac{d \mathbf{\mu}_{\beta}}{dt} \right) \nonumber \\
+& = \delta_{\alpha, \beta} \frac{d \sigma_{\alpha}}{dt} + (1 - \delta_{\alpha \beta} ) \left( \sigma_{\alpha} \Omega_{\alpha \beta}^h + \sigma_{\beta} \Omega_{\beta \alpha}^v \right)
+\end{align}
+
+where we have defined the generators of rotations in both \(\mathbf{\mu}_{\alpha}\) and \( \mathbf{\nu}_{\alpha}\) bases
+
+\begin{align}
+\label{eq:Omega_ref_v}
+\Omega_{\alpha \beta}^v(t) & = \frac{d \mathbf{\mu}_{\alpha}^T}{dt} \mathbf{\mu}_{\beta} \\
+\label{eq:Omega_ref_h}
+\Omega_{\alpha \beta}^h(t) & = \frac{d \mathbf{\nu}_{\alpha}^T}{dt} \mathbf{\nu}_{\beta}
+\end{align}
+
+This let us see how off-diagonal variations are related to the basis rotations, while the diagonal dynamics correspond to eigenvalues changes. Introducing the symmetric and antisymmetric parts of \( \frac{d \mathbf{W}}{dt} \) we can rewrite definitions \eqref{eq:Omega_def_v},\eqref{eq:Omega_def_h} as
+
+\begin{align}
+\Omega_{\alpha \beta}^v = \frac{2}{\sigma_{\alpha} + \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^A - \frac{2}{\sigma_{\alpha} - \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^S \\
+\Omega_{\alpha \beta}^h = \frac{2}{\sigma_{\alpha} + \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^A + \frac{2}{\sigma_{\alpha} - \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^S
+\end{align}
+
+Projecting the full learning equations on the SVD basis we obtain
+
+\begin{align}
+\label{eq:cd_svd_w}
+\left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta} & = \langle v_{\alpha} h_{\beta} \rangle_{data} - \langle v_{\alpha} h_{\beta} \rangle_{model} \\
+\left( \frac{d \mathbf{a}}{dt} \right)_{\alpha} & = \langle v_{\alpha} \rangle_{data} - \langle v_{\alpha} \rangle_{model} \\
+\left( \frac{d \mathbf{b}}{dt} \right)_{\alpha} & = \langle h_{\alpha} \rangle_{data} - \langle h_{\alpha} \rangle_{model}
+\end{align}
+
+with
+
+\begin{equation}
+v_{\alpha} = \sum_i v_i \mu_{i,\alpha} \, , \qquad h_{\alpha} = \sum_j h_j \nu_{j,\alpha}
+\end{equation}
+
+In order to proceed, we consider the expansion to second order of the mean-field free energy
+
+\begin{align}
+F(\mathbf{m}^v,\mathbf{m}^h) & = \frac{1}{2} \sum_{i = 1}^N (1 + m_i^v) \log (1 + m_i^v) + (1 - m_i^v) \log (1 - m_i^v) \\
+& + \frac{1}{2} \sum_{j=1}^M (1 + m_j^h) \log (1 + m_j^h) + (1 - m_j^h) \log (1 - m_j^h) \\
+& - \sum_{i,j} w_{ij} m_i^v m_j^h + \sum_{i=1}^N a_i m_i^v + \sum_{j=1}^M b_j m_j^h \\
+& \simeq \frac{1}{2} \sum_{i=1}^N \left(m_i^v\right)^2 + \frac{1}{2} \sum_{j=1}^M \left(m_j^h\right)^2 - \sum_{ij} w_{ij} m_i^v m_j^h + \sum_{i=1}^N a_i m_i^v + \sum_{j=1}^M b_j m_j^h
+\end{align}
+
+The corresponding probability measure is Gaussian, for which we can write the covariance matrix in the following form (\(\sigma_v, \sigma_h\) being the variances of visible and hidden magnetizations)
+
+\begin{equation}
+\operatorname{cov}(\mathbf{m^v},\mathbf{m^h}) =
+\begin{pmatrix}
+\frac{\sigma_h^{-2}}{\sigma_v^{-2} \sigma_h^{-2} - \mathbf{W W^T}} & {\mathbf{W}\frac{1}{\sigma_v^{-2} \sigma_h^{-2} - \mathbf{W^T W}} \\
+\mathbf{W^T} \frac{1}{\sigma_v^{-2} \sigma_h^{-2} - \mathbf{W W^T}} & \frac{\sigma_h^{-2}}{\sigma_v^{-2} \sigma_h^{-2} - \mathbf{W W^T}} 
+\end{pmatrix}
+\end{equation}
+
+In this mean-field picture, the values of visible and hidden nodes are identified with the magnetizations. This consists in treating a RBM with Gaussian variables and further assuming the external fields and the mean of the data to be null (normalization and rescaling of the training set can determine such conditions) we can rewrite the empirical expectation in \eqref{eq:cd_svd_w} as
+
+\begin{equation}
+\langle v_{\alpha} h_{\beta} \rangle_{data} = \sigma_h^2 \sigma_{\beta} \langle v_{\alpha} v_{\beta} \rangle = \sigma_h^2 \sigma_{\beta} \operatorname{cov}(v_{\alpha}, v_{\beta})
+\end{equation}
+
+where we see that the covariance matrix of the data comes out. Plugging the above equation into \eqref{eq:cd_svd_w} and recognizing also the average over the model as a covariance, the diagonalized equation that we obtain defines the evolution of the singular values
+
+\begin{equation}
+\frac{d \sigma_{\alpha}}{dt} = \sigma_h^2 \sigma_{\alpha} \left( \langle v_{\alpha}^2 \rangle_{data} - \frac{\sigma_v^2}{1 - \sigma_v^2 \sigma_h^2 \sigma_{\alpha}^2} \right)
+\end{equation}
 
 \end{document}
