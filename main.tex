@@ -656,12 +656,13 @@ where we have defined the generators of rotations in both \(\mathbf{\mu}_{\alpha
 \Omega_{\alpha \beta}^h(t) & = \frac{d \mathbf{\nu}_{\alpha}^T}{dt} \mathbf{\nu}_{\beta}
 \end{align}
 
-This let us see how off-diagonal variations are related to the basis rotations, while the diagonal dynamics correspond to eigenvalues changes. Introducing the symmetric and antisymmetric parts of \( \frac{d \mathbf{W}}{dt} \) we can rewrite definitions \eqref{eq:Omega_def_v},\eqref{eq:Omega_def_h} as
+This let us see how off-diagonal variations are related to the basis rotations, while the diagonal dynamics correspond to eigenvalues changes.
+% Introducing the symmetric and antisymmetric parts of \( \frac{d \mathbf{W}}{dt} \) we can rewrite definitions \eqref{eq:Omega_def_v},\eqref{eq:Omega_def_h} as
 
-\begin{align}
-\Omega_{\alpha \beta}^v = \frac{2}{\sigma_{\alpha} + \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^A - \frac{2}{\sigma_{\alpha} - \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^S \\
-\Omega_{\alpha \beta}^h = \frac{2}{\sigma_{\alpha} + \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^A + \frac{2}{\sigma_{\alpha} - \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^S
-\end{align}
+%\begin{align}
+%\Omega_{\alpha \beta}^v = \frac{2}{\sigma_{\alpha} + \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^A - \frac{2}{\sigma_{\alpha} - \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^S \\
+%\Omega_{\alpha \beta}^h = \frac{2}{\sigma_{\alpha} + \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^A + \frac{2}{\sigma_{\alpha} - \sigma_{\beta}} \left( \frac{d \mathbf{W}}{dt} \right)_{\alpha \beta}^S
+%\end{align}
 
 Projecting the full learning equations on the SVD basis we obtain
 
@@ -718,5 +719,7 @@ By linear analysis we can find the stable fixed points for the above equation, g
 0 & \langle v_{\alpha}^2 \rangle_{data} < \sigma_v^2 
 \end{cases}
 \end{equation}
+
+and we see how the evolution of the singular values in the linear regime is driven by the SVD modes of the training data. The strongest modes, those above the threshold \( \sigma_v^2 \), are selected and learnt while the modes below threshold are damped.
 
 \end{document}
