@@ -700,13 +700,23 @@ The corresponding probability measure is Gaussian, for which we can write the co
 In this mean-field picture, the values of visible and hidden nodes are identified with the magnetizations. This consists in treating a RBM with Gaussian variables and further assuming the external fields and the mean of the data to be null (normalization and rescaling of the training set can determine such conditions) we can rewrite the empirical expectation in \eqref{eq:cd_svd_w} as
 
 \begin{equation}
-\langle v_{\alpha} h_{\beta} \rangle_{data} = \sigma_h^2 \sigma_{\beta} \langle v_{\alpha} v_{\beta} \rangle = \sigma_h^2 \sigma_{\beta} \operatorname{cov}(v_{\alpha}, v_{\beta})
+\langle v_{\alpha} h_{\beta} \rangle_{data} = \sigma_h^2 \sigma_{\beta} \langle v_{\alpha} v_{\beta} \rangle_{data} = \sigma_h^2 \sigma_{\beta} \operatorname{cov}(v_{\alpha}, v_{\beta})
 \end{equation}
 
 where we see that the covariance matrix of the data comes out. Plugging the above equation into \eqref{eq:cd_svd_w} and recognizing also the average over the model as a covariance, the diagonalized equation that we obtain defines the evolution of the singular values
 
 \begin{equation}
 \frac{d \sigma_{\alpha}}{dt} = \sigma_h^2 \sigma_{\alpha} \left( \langle v_{\alpha}^2 \rangle_{data} - \frac{\sigma_v^2}{1 - \sigma_v^2 \sigma_h^2 \sigma_{\alpha}^2} \right)
+\end{equation}
+
+By linear analysis we can find the stable fixed points for the above equation, given by
+
+\begin{equation}
+\sigma_{\alpha}^2 =
+\begin{cases}
+\frac{\langle v_{\alpha}^2 \rangle_{data} - \sigma_{v}^2}{\sigma_{v}^2 \sigma_{h}^2 \langle v_{\alpha}^2 \rangle_{data}} & \langle v_{\alpha}^2 \rangle_{data} > \sigma_v^2 \\
+0 & \langle v_{\alpha}^2 \rangle_{data} < \sigma_v^2 
+\end{cases}
 \end{equation}
 
 \end{document}
