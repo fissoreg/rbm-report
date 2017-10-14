@@ -18,13 +18,77 @@
 
 \begin{document}
 
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE Politecnico di Torino}\\[1.5cm] % Name of your university/college
+\textsc{\Large International Master Program in Physics of Complex Systems}\\[0.5cm] % Major heading such as course name
+\textsc{\large Master thesis}\\[0.5cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Learning Dynamics of Restricted Boltzmann Machines}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{minipage}{0.4\textwidth}
+\begin{flushleft} \large
+\emph{Author:}\\
+Giancarlo \textsc{Fissore} % Your name
+\end{flushleft}
+\end{minipage}
+~
+\begin{minipage}{0.4\textwidth}
+\begin{flushright} \large
+\emph{Supervisors:} \\ 
+Cyril \textsc{Furtlehner}, INRIA (Paris)\\ % Supervisor's Name
+Aur\'elien \textsc{Decelle}, 
+Laboratoire de Recherche en Informatique (Paris)
+\end{flushright}
+\end{minipage}\\[2cm]
+
+% If you don't want a supervisor, uncomment the two lines below and remove the section above
+%\Large \emph{Author:}\\
+%John \textsc{Smith}\\[3cm] % Your name
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+{\large October 2017}\\[2cm] % Date, change the \today to a set date if you want to be precise
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\includegraphics[width=0.4 \linewidth]{polito.png}\\ [1cm] % Include a department/university logo - this will require the graphicx package
+ 
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
 \title{Learning dynamics of Restricted Boltzmann Machines}
 
 \author{Giancarlo Fissore}
 \email{giancarlo.fissore@gmail.com}
 \affiliation{Laboratoire de Recherche en Informatique, TAO - INRIA, Universit\'e Paris-Sud, Bat. 660, 91190 Gif-sur-Yvette, France.}
 
-\date{28 June 2017}
+%\date{28 June 2017}
 
 \begin{abstract}
 Restricted Boltzmann Machines (RBMs) are elementary generative models that have been shown to be effective on their own or as building blocks for deep architectures. Despite their relative simplicity, however, a deep theoretical understanding of their functioning is missing and we try to improve on this situation by analysing the learning dynamics of such model. First, we compare a new physics-inspired training algorithm to the classical persistent contrastive divergence method, finding that the classical strategy is slightly preferable. However, the minor differences that we observed do not impact the learning dynamics and leveraging the tools of statistical physics we show that a theoretical framework to study RBMs can be identified. In particular, mean-field methods are shown to provide a good characterization for the linear regime in which RBMs are found to operate at the beginning of the training. In this regime, it is shown that the parameters of the model are learnt in such a way to reproduce the singular value decomposition of the training data. Moreover, looking at the dynamical evolution of the model's parameters it is shown how the learning dynamics are initially fast and then slow down, and a cutoff in the parameters is found which we interpret as a signal to stop the learning. Finally, a basic statistical characterization of the parameters for a trained RBM is highlighted.
@@ -603,7 +667,7 @@ The behaviour of the inverse temperature also suggests that the training of a RB
 
 Beyond the linear regime, the evolution of the singular values highlights a more comprehensive description of the learning procedure as a whole. We have seen how the singular values and the corresponding singular vectors are learnt one by one quite fast, and they are then strengthen by proceeding the training. This process does not really come to an end, but it slows down significantly after many epochs revealing a cutoff in the number of learnt modes. We believe this is an important observation suggesting that an indicator defined on the learnt modes could eventually signal the end of the learning, providing a rigorous stopping criterium.
 
-The investigation presented in this report serves as a first step in the determination of the statistical properties of trained RBMs. The emerging picture is that parameters of the model are in part random (interpreted as noise) and in part structured and related to data. This is expressed in eq. \eqref{eq:params_exp}, where the set of outliers is the one of interest; determining the statistical properties of this subset of parameters (starting with mean and variance, to proceed by determining the form of the distribution) would lead to the association of a proper statistical ensemble to the RBM model, improving on current approximations based on unrealistic assumptions such as independence of the weights \cite{monasson}.
+The investigation presented in this report serves as a first step in the determination of the statistical properties of trained RBMs. The emerging picture is that  parameters of the model are in part random (interpreted as noise) and in part structured and related to data. This is expressed in eq. \eqref{eq:params_exp}, where the set of outliers is the one of interest; determining the statistical properties of this subset of parameters (starting with mean and variance, to proceed by determining the form of the distribution) would lead to the association of a proper statistical ensemble to the RBM model, improving on current approximations based on unrealistic assumptions such as independence of the weights \cite{monasson}.
 
 Altogether, our analysis of the learning dynamics helped shading some lights on the inner workings of the RBM model, providing a useful framework in which subsequent investigations can more easily be performed.
 
