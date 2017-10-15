@@ -116,13 +116,13 @@ where \(\langle \cdot \rangle_{data}\) denotes an average over the empirical dis
 In the same way we can get the update rules for the external fields
 
 \begin{equation}
-\lable{eq:a_up}
+\label{eq:a_up}
 \Delta \mathbf{a} &= \alpha \left( \mathbf{v}_{data} - \mathbf{v}_{model} \right)
 \end{equation}
 \begin{equation}
 \label{eq:b_up}
 \Delta \mathbf{b} &= \alpha \left( \mathbf{h}_{data} - \mathbf{h}_{model} \right)
-\end{align}
+\end{equation}
 
 Given the update rules, the training consists in actually performing the gradient ascent. Once this is done, it is possible to sample the equilibrium configurations of the RBM to obtain samples which are generated according to the probability distribution of the training data. Unfortunately, the average over the model distribution \(\textstyle \langle \cdot \rangle_{model}\) is intractable as such term is exponential in the number of visible units. Approximations are then necessary to train and sample from a RBM; in particular Monte Carlo based algorithms are generally employed, such as \textit{k-steps contrastive divergence} (CDk) \cite{Hinton_CD}  and \textit{persistent contrastive divergence} (PCD) \cite{PCD}. Approximate algorithms based on mean-field methods from statistical physics have also been employed, but showing results of inferior quality with respect to CDk-PCD \cite{PCD}. Recently, however, a new algorithm based on mean-field has been proposed \cite{tap_train}, showing results comparable to the usual Monte Carlo based methods. An overview of this novel algorithm and an analysis of its performance is given in the next sections.
 
@@ -638,7 +638,7 @@ and we take the continuous limit of the learning equations to obtain
 \frac{d b_j}{dt} & = \langle h_j \rangle_{data} - \langle h_j \rangle_{model}
 \end{align}
 
-The l.h.s. of \eqref{eq:cont1} can be expressed in a simple form by expanding it over the basis defined by the SVD and exploiting \eqref{eq:w_t}
+The left hand side of \eqref{eq:cont1} can be expressed in a simple form by expanding it over the basis defined by the SVD and exploiting \eqref{eq:w_t}
 
 \begin{align}
 \label{eq:w_svd_exp}
